@@ -39,7 +39,7 @@ def main():
     plot_mppt_tracking(time_steps, irradiance_profile, p_true, p_po, p_inc)
     
     # Boost Converter Duty Cycle Translation
-    avg_v_mpp = np.mean([v_po[-1], v_inc[-1]])
+    avg_v_mpp = np.mean([v_po, v_inc])
     duty_cycle = converter.compute_duty_cycle(avg_v_mpp)
     net_p_out = converter.compute_output_power(np.mean(p_inc))
     
