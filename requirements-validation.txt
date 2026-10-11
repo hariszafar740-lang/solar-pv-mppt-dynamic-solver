@@ -1,0 +1,10 @@
+# Optional cross-validation dependency (requires Python >= 3.11).
+#
+# pvlib is pinned because the regression tests in
+# tests/test_pvlib_crosscheck.py verify this repository's single-diode solver
+# against pvlib's independent CEC implementation, and because pvlib bundles
+# the exact CEC module database record ("SAM 2018.11.11 r2",
+# sam-library-cec-modules-2019-03-05.csv) that the default reference module
+# (AU Optronics PM060MBR_300W) is pinned to.  See tests/test_reference_cec.py
+# for the full provenance record including the dataset file SHA-256.
+pvlib==0.16.1
