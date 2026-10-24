@@ -57,6 +57,15 @@ $$C_{\text{th}} \frac{dT_c}{dt} = \alpha_{\text{abs}} G(t) - \frac{P_{\text{elec
 
 Includes Sera's irradiance-compensated **`DeltaPPO`** (`dP-P&O`) controller, eliminating ramp-induced voltage drift (`99.94%` EN 50530 efficiency vs. `87.18%` for standard P&O).
 
+### 8. State-Space Averaged Boost Power Stage, Cascaded Current-Mode PI Control & Loss Map
+
+`src/dynamic_boost.py` upgrades the steady-state duty translator to a coupled 2nd-order `[v_pv, i_L]` non-ideal boost stage integrated via 4th-order Runge-Kutta with discontinuous-conduction diode blocking (`i_L >= 0`):
+
+$$C_{\text{in}} \frac{dv_{\text{pv}}}{dt} = i_{\text{pv}}(v_{\text{pv}}, G, T_c) - i_L, \qquad L \frac{di_L}{dt} = v_{\text{pv}} - R_{\text{eq}}(D) i_L - (1 - D)(V_{\text{bus}} + V_{fd})$$
+
+* **`CascadedBoostPIController`**: Decouples the lightly damped input $L\text{--}C_{\text{in}}$ tank into an outer PV-voltage PI loop commanding $i_{L,\text{ref}}$ (with $i_{\text{pv}}$ feedforward) and an inner average-current-mode PI loop commanding PWM duty $D$ (`69.5 mV` RMS voltage-servo error across `1000 -> 550 -> 900 W/m²` irradiance steps).
+* **`BoostLossBreakdown` & Weighted Efficiencies**: Resolves inductor winding copper ($I_{\text{rms}}^2 R_L$), MOSFET conduction ($D I_{\text{rms}}^2 R_{ds(\text{on})}$), switching + $C_{oss}$ + reverse-recovery $Q_{rr}$, freewheeling diode conduction, and magnetic core ripple losses, alongside European ($\eta_{\text{Euro}} = 97.67\%$) and California CEC ($\eta_{\text{CEC}} = 97.66\%$) weighted ratings at $V_{\text{bus}} = 60\,\mathrm{V}$.
+
 ## Reference Module & Data Provenance
 
 Default constructor parameters are the STC datasheet values of the
@@ -133,8 +142,11 @@ python main.py                       # regenerate benchmarks and plots in result
 ### CENELEC EN 50530 Dynamic Irradiance Ramps & Coupled Electro-Thermal Cell Transient
 ![EN 50530 Dynamic Benchmark](results/en50530_dynamic_benchmark.png)
 
+### State-Space Averaged Boost Stage, Cascaded PI Servo & Loss Breakdown
+![Dynamic Boost Converter](results/dynamic_boost_converter.png)
+
 ## Testing & CI
 
-* `pytest` suite (178 tests) covers the STC reference point, the historical 300.08 W / 266.898 W defect, invalid-input rejection (negative/NaN/complex irradiance, out-of-envelope temperature), zero & low irradiance, thermal derating, MPPT convergence/steady-state stability/dynamic step response/voltage bounds, boost-converter math & clamping, and the pinned CEC reference data.
+* `pytest` suite (218 tests) covers the STC reference point, the historical 300.08 W / 266.898 W defect, invalid-input rejection (negative/NaN/complex irradiance, out-of-envelope temperature), zero & low irradiance, thermal derating, MPPT convergence/steady-state stability/dynamic step response/voltage bounds, boost-converter math & clamping, and the pinned CEC reference data.
 * pvlib cross-checks (`tests/test_pvlib_crosscheck.py`) run automatically when pvlib is installed and skip otherwise — the core suite is hermetic and needs no network access.
 * GitHub Actions (`.github/workflows/ci.yml`) runs ruff lint + pytest on Python 3.10/3.11/3.12 (pvlib cross-checks on 3.11+).
