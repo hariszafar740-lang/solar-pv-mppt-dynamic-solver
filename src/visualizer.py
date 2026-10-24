@@ -185,3 +185,125 @@ def plot_partial_shading_curves(
     plt.tight_layout()
     plt.savefig(save_path, dpi=300)
     plt.close()
+
+
+def plot_global_mppt_comparison(
+    benchmark,
+    save_path='results/global_mppt_comparison.png',
+):
+    """Render 2-panel dynamic Global MPPT vs. Conventional MPPT benchmark under shading."""
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13.8, 8.3), sharex=True)
+
+    t = benchmark.time_steps
+    max_p = float(max(benchmark.gmpp_powers)) if len(benchmark.gmpp_powers) else 100.0
+
+    styles = {
+        "Conventional P&O": ("#d62728", "-", 1.75, 0.88, 3),
+        "Conventional INC": ("#9467bd", "--", 1.65, 0.88, 4),
+        "PSO Global MPPT": ("#1f77b4", "-", 1.90, 0.92, 5),
+        "Hybrid Scan + Adaptive INC": ("#2ca02c", "-", 2.15, 0.96, 6),
+    }
+
+    ax1.plot(
+        t,
+        benchmark.gmpp_powers,
+        color="#111111",
+        linestyle=":",
+        linewidth=2.3,
+        label="True Dynamic GMPP",
+        zorder=7,
+    )
+    ax2.plot(
+        t,
+        benchmark.gmpp_voltages,
+        color="#111111",
+        linestyle=":",
+        linewidth=2.3,
+        label="True GMPP Voltage",
+        zorder=7,
+    )
+
+    for name, traj in benchmark.trajectories.items():
+        col, ls, lw, alpha, zo = styles.get(name, ("#ff7f0e", "-", 1.8, 0.9, 4))
+        lbl = (
+            f"{name} (Dyn {traj.tracking_efficiency_pct:.1f}% / "
+            f"Settled {traj.settled_efficiency_pct:.1f}%)"
+        )
+        ax1.plot(
+            t,
+            traj.powers,
+            color=col,
+            linestyle=ls,
+            linewidth=lw,
+            alpha=alpha,
+            label=lbl,
+            zorder=zo,
+        )
+        ax2.plot(
+            t,
+            traj.voltages,
+            color=col,
+            linestyle=ls,
+            linewidth=lw,
+            alpha=alpha,
+            label=name,
+            zorder=zo,
+        )
+
+    boundaries = list(benchmark.stage_boundaries) + [len(t)]
+    for b_idx, start in enumerate(benchmark.stage_boundaries):
+        if start > 0:
+            ax1.axvline(start, color="#6b7280", linestyle="--", linewidth=1.1, alpha=0.7)
+            ax2.axvline(start, color="#6b7280", linestyle="--", linewidth=1.1, alpha=0.7)
+        end = boundaries[b_idx + 1]
+        mid = 0.5 * (start + end)
+        short_lbl = benchmark.stage_labels[b_idx]
+        ax1.text(
+            mid,
+            max_p * 1.11,
+            short_lbl,
+            ha="center",
+            va="center",
+            fontsize=8.8,
+            fontweight="bold",
+            color="#1f2937",
+            bbox={
+                "boxstyle": "round,pad=0.28",
+                "facecolor": "#f3f4f6",
+                "edgecolor": "#d1d5db",
+                "alpha": 0.95,
+            },
+        )
+
+    ax1.set_ylim(0.0, max_p * 1.22)
+    ax1.set_ylabel("String Output Power P (Watts)", fontsize=10, fontweight="bold")
+    ax1.set_title(
+        "Global MPPT (PSO & Hybrid Scan + Adaptive INC) vs. Local-Trap Conventional MPPT",
+        fontsize=11.5,
+        fontweight="bold",
+        pad=38,
+    )
+    ax1.grid(True, ls="--", alpha=0.45)
+    ax1.legend(
+        loc="lower center",
+        bbox_to_anchor=(0.5, 1.01),
+        ncol=3,
+        fontsize=8.3,
+        framealpha=0.95,
+    )
+
+    ax2.set_ylim(0.0, 43.0)
+    ax2.set_xlabel("Control Time Steps (k)", fontsize=10, fontweight="bold")
+    ax2.set_ylabel("Operating Voltage V (Volts)", fontsize=10, fontweight="bold")
+    ax2.set_title(
+        "Operating Voltage Trajectory Across Multi-Peak Bypass-Diode Basins",
+        fontsize=11.0,
+        fontweight="bold",
+    )
+    ax2.grid(True, ls="--", alpha=0.45)
+    ax2.legend(loc="lower right", ncol=3, fontsize=8.4, framealpha=0.94)
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
+    plt.close()

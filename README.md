@@ -42,6 +42,13 @@ For a series string of $M = N_{\text{mod}} \times N_{\text{bp}}$ cell substrings
 
 $$I_{\text{sub},m}(V_m) = I_{\text{cell},m}(V_m) + \begin{cases} I_{0,\text{bp}}\left[\exp(-V_m / V_{t,\text{bp}}) - 1\right], & V_m < 0 \\ 0, & V_m \ge 0 \end{cases}$$
 
+### 6. Global MPPT Under Multi-Peak Partial Shading
+
+Conventional hill-climbing trackers (`PerturbAndObserve`, `IncrementalConductance`) follow local $dP/dV$ sign and become trapped in high-voltage local maxima (LMPPs). `src/global_mppt.py` provides two Global MPPT (GMPPT) engines with zero steady-state oscillation lock and bypassed-plateau cloud-clearance watchdog probing:
+
+* **`ParticleSwarmMPPT`**: Stratified $N_p$-particle voltage swarm with annealed inertia $w(k): w_{\max} \to w_{\min}$, velocity clamping, convergence lock, and event-triggered re-dispersion.
+* **`HybridGlobalScanINC`**: Fast coarse global voltage sweep across $[V_{\min}, V_{\max}]$ followed by Variable-Step Adaptive Incremental Conductance ($\Delta V_k = \operatorname{clip}(\alpha |dP/dV|, \Delta V_{\min}, \Delta V_{\max})$).
+
 ## Reference Module & Data Provenance
 
 Default constructor parameters are the STC datasheet values of the
@@ -111,6 +118,9 @@ python main.py                       # regenerate benchmarks and plots in result
 
 ### Bypass-Diode Partial-Shading & Multi-Peak P-V Curves
 ![Partial Shading Curves](results/partial_shading_curves.png)
+
+### Global MPPT (PSO & Hybrid Scan + Adaptive INC) vs. Local-Trap Conventional MPPT
+![Global MPPT Comparison](results/global_mppt_comparison.png)
 
 ## Testing & CI
 
