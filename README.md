@@ -1,10 +1,24 @@
-# Solar PV Dynamic Characterization & MPPT Solver
+# Solar PV Dynamic Characterization, Global MPPT & Boost Stage Solver
 
-![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
-![CI](https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/actions/workflows/ci.yml/badge.svg)
-![Domain](https://img.shields.io/badge/Focus-Renewable%20Energy%20Integration-orange)
+[![CI](https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/actions/workflows/ci.yml/badge.svg)](https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/actions/workflows/ci.yml)
+[![GitHub Pages](https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/actions/workflows/deploy_pages.yml/badge.svg)](https://hariszafar740-lang.github.io/solar-pv-mppt-dynamic-solver/)
+[![Live Explorer](https://img.shields.io/badge/Live_Explorer-GitHub_Pages-0ea5e9?logo=github)](https://hariszafar740-lang.github.io/solar-pv-mppt-dynamic-solver/)
+![Python Version](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)
+[![Release](https://img.shields.io/badge/release-v1.0.0-success)](https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/releases/tag/v1.0.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Physics-based Python implementation of the **Single-Diode Solar Photovoltaic (PV) Module Model**, dynamic **MPPT Control Engines** (P&O and Incremental Conductance), and a **DC-DC Boost Converter Duty Cycle Translator** for grid-tied inverter links.
+Multi-physics Python package (`pv-mppt-solver`), command-line suite (`pv-mppt`), and **[Live Interactive GitHub Pages Workbench](https://hariszafar740-lang.github.io/solar-pv-mppt-dynamic-solver/)** coupling **CEC/pvlib-verified Single-Diode PV Physics**, **Schottky Bypass-Diode Partial Shading**, **Global MPPT (PSO & Hybrid Global-Scan + Adaptive INC)**, **CENELEC EN 50530 Dynamic Irradiance Ramps with Coupled Electro-Thermal Cell ODE & Sera `dP-P&O`**, and a **State-Space Averaged DC-DC Boost Power Stage with 2-Loop Cascaded Current-Mode PI Control**.
+
+## Subsystem Verification Summary
+
+| Subsystem | Module | Key Verified Metric |
+|---|---|---|
+| Single-Diode CEC Extraction | `src/pv_model.py` | `300.1152 W` STC (`< 1e-8 A` vs. `pvlib` Lambert-W across `-10..75 °C`) |
+| Schottky Bypass Partial Shading | `src/partial_shading.py` | Exact KVL multi-peak staircases (`148.16 W @ 22.28 V`, 3 peaks under `1000/700/350 W/m²`) |
+| Global MPPT (PSO & Hybrid INC) | `src/global_mppt.py` | `92.47%` Hybrid dynamic / `99.57%` PSO settled vs. `80.60%` conventional LMPP trap |
+| CENELEC EN 50530 & Thermal ODE | `src/en50530_benchmark.py` | `99.94%` Sera `dP-P&O` (`0.25 V` RMS error) vs. `87.18%` Standard P&O ramp drift |
+| State-Space Boost & Cascaded PI | `src/dynamic_boost.py` | `η_Euro = 97.67%` (`60 V` LVDC), `69.5 mV` RMS voltage-servo tracking error |
+| CLI & Interactive Web Explorer | `src/cli.py`, `src/web_dashboard.py` | `pv-mppt` (`info`, `iv`, `shading`, `en50530`, `boost`, `benchmark`, `web`) + real-time browser lab |
 
 ## Mathematical System Formulation
 
@@ -132,6 +146,7 @@ pv-mppt boost --v-bus 60 --stages 1000:45 550:45 900:45
 # Run full test suite & regenerate all 7 publication figures
 python -m pytest
 pv-mppt benchmark --output-dir results
+pv-mppt web --output-dir site        # build interactive HTML5/Canvas workbench
 ```
 
 ## Simulation Artifacts & Dynamic Results
@@ -159,6 +174,10 @@ pv-mppt benchmark --output-dir results
 
 ## Testing & CI
 
-* `pytest` suite (227 tests) covers the STC reference point, the historical 300.08 W / 266.898 W defect, invalid-input rejection (negative/NaN/complex irradiance, out-of-envelope temperature), zero & low irradiance, thermal derating, MPPT convergence/steady-state stability/dynamic step response/voltage bounds, boost-converter math & clamping, and the pinned CEC reference data.
+* `pytest` suite (230 tests) covers the STC reference point, the historical 300.08 W / 266.898 W defect, invalid-input rejection (negative/NaN/complex irradiance, out-of-envelope temperature), zero & low irradiance, thermal derating, MPPT convergence/steady-state stability/dynamic step response/voltage bounds, boost-converter math & clamping, and the pinned CEC reference data.
 * pvlib cross-checks (`tests/test_pvlib_crosscheck.py`) run automatically when pvlib is installed and skip otherwise — the core suite is hermetic and needs no network access.
 * GitHub Actions (`.github/workflows/ci.yml`) installs `pv-mppt-solver` in editable mode and runs `ruff`, `pytest`, `pv-mppt` CLI smoke tests, and `main.py` across Python 3.10–3.13 (pvlib cross-checks on 3.11/3.12).
+
+## Citation
+
+Machine-readable citation metadata (`v1.0.0`) is provided in [`CITATION.cff`](CITATION.cff) (GitHub's *"Cite this repository"* button exports APA and BibTeX directly).

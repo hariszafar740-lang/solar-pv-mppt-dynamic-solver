@@ -31,6 +31,7 @@ from src.visualizer import (
     plot_pv_characteristics,
     plot_thermal_derating,
 )
+from src.web_dashboard import build_static_site
 
 __all__ = ["build_parser", "main"]
 
@@ -233,6 +234,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for generated PNG figures (default: results).",
     )
     p_bm.add_argument("--json", action="store_true", help="Emit JSON summary.")
+
+    # 7. web
+    p_web = sub.add_parser(
+        "web",
+        help="Build static interactive GitHub Pages explorer bundle (site/).",
+    )
+    p_web.add_argument(
+        "-o",
+        "--output-dir",
+        type=str,
+        default="site",
+        help="Target directory for index.html, benchmark_data.json & assets/ (default: site).",
+    )
+    p_web.add_argument(
+        "--results-dir",
+        type=str,
+        default="results",
+        help="Source directory of 300-DPI PNG figures (default: results).",
+    )
+    p_web.add_argument("--json", action="store_true", help="Emit JSON manifest.")
 
     return parser
 
@@ -589,9 +610,11 @@ def _cmd_benchmark(args: argparse.Namespace) -> int:
     irr_prof = [1000.0] * 50 + [600.0] * 50 + [900.0] * 50
     t_steps = np.arange(len(irr_prof))
     p_true, p_po, p_inc = [], [], []
-    po = PerturbAndObserve(step_size=0.15, v_init=20.0, v_min=0.0, v_max=pv.V_oc)
-    inc = IncrementalConductance(step_size=0.15, v_init=20.0, v_min=0.0, v_max=pv.V_oc)
-    v_po, v_inc = 20.0, 20.0
+    po = PerturbAndObserve(step_size=0.45, v_init=22.0, v_min=0.0, v_max=pv.V_oc)
+    inc = IncrementalConductance(
+        step_size=0.45, v_init=22.0, v_min=0.0, v_max=pv.V_oc, conductance_tol=2e-2
+    )
+    v_po, v_inc = 22.0, 22.0
     for g_val in irr_prof:
         v_a, i_a, p_a = pv.calculate_iv_curve(G=g_val)
         p_true.append(float(np.max(p_a)))
@@ -666,6 +689,22 @@ def _cmd_benchmark(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_web(args: argparse.Namespace) -> int:
+    manifest = build_static_site(args.output_dir, results_dir=args.results_dir)
+    if args.json:
+        _emit_json(manifest)
+        return 0
+
+    print("=" * 72)
+    print(f"Static Interactive Explorer Built -> {manifest['output_dir']}")
+    print("-" * 72)
+    print(f"  Entry HTML:      {manifest['index_html']}")
+    print(f"  Solver Dataset:  {manifest['benchmark_json']}")
+    print(f"  Figure Assets:   {len(manifest['assets'])} PNG files copied")
+    print("=" * 72)
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """CLI entry point returning POSIX exit code (0 on success, 2 on domain error)."""
     parser = build_parser()
@@ -678,6 +717,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "en50530": _cmd_en50530,
         "boost": _cmd_boost,
         "benchmark": _cmd_benchmark,
+        "web": _cmd_web,
     }
     try:
         return handlers[args.command](args)

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.lines import Line2D
 
 
@@ -9,59 +10,124 @@ def plot_pv_characteristics(pv_model, save_path='results/pv_characteristics.png'
     irradiances = [1000, 800, 600, 400]
     colors = ['#d62728', '#ff7f0e', '#2ca02c', '#1f77b4']
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.5))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14.2, 5.6))
+    mpp_v_list, mpp_p_list = [], []
     for G, col in zip(irradiances, colors, strict=True):
-        v, i, p = pv_model.calculate_iv_curve(G=G, T_c_celsius=25.0)
-        ax1.plot(v, i, label=f'G = {G} W/m²', color=col, linewidth=2)
-        ax2.plot(v, p, label=f'G = {G} W/m²', color=col, linewidth=2)
+        v, i, p = pv_model.calculate_iv_curve(G=G, T_c_celsius=25.0, num_points=400)
+        idx = int(np.argmax(p))
+        v_mp, i_mp, p_mp = float(v[idx]), float(i[idx]), float(p[idx])
+        mpp_v_list.append(v_mp)
+        mpp_p_list.append(p_mp)
 
-    ax1.set_title('I-V Characteristics under Variable Irradiance',
-                  fontsize=11, fontweight='bold')
-    ax1.set_xlabel('Voltage V (Volts)', fontsize=10)
-    ax1.set_ylabel('Current I (Amperes)', fontsize=10)
-    ax1.grid(True, ls='--', alpha=0.5)
-    ax1.legend()
+        ax1.plot(v, i, label=f'G = {G} W/m² (I_sc = {i[0]:.2f} A)', color=col, linewidth=2.1)
+        ax1.scatter([v_mp], [i_mp], color=col, s=46, zorder=5, edgecolors='white', linewidths=1.1)
 
-    ax2.set_title('P-V Characteristics under Variable Irradiance',
+        ax2.plot(
+            v,
+            p,
+            label=f'G = {G} W/m² (P_mpp = {p_mp:.1f} W @ {v_mp:.1f} V)',
+            color=col,
+            linewidth=2.1,
+        )
+        ax2.scatter([v_mp], [p_mp], color=col, s=50, zorder=5, edgecolors='white', linewidths=1.1)
+
+    ax2.plot(
+        mpp_v_list,
+        mpp_p_list,
+        color='#334155',
+        linestyle=':',
+        linewidth=1.5,
+        label='MPP Locus V_mpp(G)',
+        zorder=4,
+    )
+
+    ax1.set_title('I-V Characteristics under Variable Irradiance (T_c = 25°C)',
                   fontsize=11, fontweight='bold')
-    ax2.set_xlabel('Voltage V (Volts)', fontsize=10)
-    ax2.set_ylabel('Power P (Watts)', fontsize=10)
-    ax2.grid(True, ls='--', alpha=0.5)
-    ax2.legend()
+    ax1.set_xlabel('Module Voltage V (Volts)', fontsize=10, fontweight='bold')
+    ax1.set_ylabel('Module Current I (Amperes)', fontsize=10, fontweight='bold')
+    ax1.grid(True, ls='--', alpha=0.45)
+    ax1.legend(loc='lower left', fontsize=8.8, framealpha=0.94)
+
+    ax2.set_ylim(0.0, max(mpp_p_list) * 1.12)
+    ax2.set_title('P-V Characteristics & Maximum Power Point Locus',
+                  fontsize=11, fontweight='bold')
+    ax2.set_xlabel('Module Voltage V (Volts)', fontsize=10, fontweight='bold')
+    ax2.set_ylabel('Output Power P (Watts)', fontsize=10, fontweight='bold')
+    ax2.grid(True, ls='--', alpha=0.45)
+    ax2.legend(loc='upper left', fontsize=8.6, framealpha=0.94)
 
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300)
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
 
 def plot_mppt_tracking(time_steps, irradiance, p_true, p_po, p_inc,
                        save_path='results/mppt_tracking.png'):
     Path(save_path).parent.mkdir(parents=True, exist_ok=True)
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 7), sharex=True)
+    t_arr = np.asarray(time_steps, dtype=float)
+    g_arr = np.asarray(irradiance, dtype=float)
+    pt_arr = np.asarray(p_true, dtype=float)
+    po_arr = np.asarray(p_po, dtype=float)
+    inc_arr = np.asarray(p_inc, dtype=float)
 
-    ax1.plot(time_steps, irradiance, color='#7f7f7f', linewidth=2.5,
-             label='Irradiance (W/m²)')
+    p_sum = float(np.sum(pt_arr))
+    eta_po = (100.0 * float(np.sum(po_arr)) / p_sum) if p_sum > 0.0 else 0.0
+    eta_inc = (100.0 * float(np.sum(inc_arr)) / p_sum) if p_sum > 0.0 else 0.0
+
+    fig, (ax1, ax2) = plt.subplots(
+        2, 1, figsize=(12.5, 7.2), sharex=True, gridspec_kw={'height_ratios': [1.0, 1.55]}
+    )
+
+    ax1.plot(t_arr, g_arr, color='#334155', linewidth=2.3, label='Irradiance G(k) (W/m²)')
+    ax1.fill_between(t_arr, g_arr, float(np.min(g_arr)) - 40.0, color='#f59e0b', alpha=0.14)
+    ax1.set_ylim(max(0.0, float(np.min(g_arr)) - 60.0), float(np.max(g_arr)) + 75.0)
     ax1.set_ylabel('Irradiance (W/m²)', fontsize=10, fontweight='bold')
-    ax1.set_title('Dynamic Solar Irradiance Step Profile',
+    ax1.set_title('Dynamic Solar Irradiance Step Profile (1000 → 600 → 900 W/m²)',
                   fontsize=11, fontweight='bold')
-    ax1.grid(True, ls='--', alpha=0.5)
-    ax1.legend(loc='upper right')
+    ax1.grid(True, ls='--', alpha=0.45)
+    ax1.legend(loc='lower right', fontsize=9.0, framealpha=0.94)
 
-    ax2.plot(time_steps, p_true, 'k--', label='Theoretical MPP Power',
-             linewidth=2, alpha=0.7)
-    ax2.plot(time_steps, p_po, color='#1f77b4', label='Perturb & Observe (P&O)',
-             linewidth=1.8)
-    ax2.plot(time_steps, p_inc, color='#2ca02c', label='Incremental Conductance (INC)',
-             linewidth=1.8)
-    ax2.set_xlabel('Simulation Time Steps (k)', fontsize=10, fontweight='bold')
-    ax2.set_ylabel('Extracted Power (Watts)', fontsize=10, fontweight='bold')
-    ax2.set_title('MPPT Control Engine Dynamic Tracking Performance',
+    ax2.plot(
+        t_arr,
+        pt_arr,
+        color='#111827',
+        linestyle=':',
+        linewidth=2.1,
+        alpha=0.85,
+        label='Theoretical Instantaneous P_mpp(k)',
+        zorder=3,
+    )
+    ax2.plot(
+        t_arr,
+        po_arr,
+        color='#1f77b4',
+        linewidth=2.6,
+        alpha=0.82,
+        label=f'Perturb & Observe — P&O (η = {eta_po:.2f}%)',
+        zorder=4,
+    )
+    ax2.plot(
+        t_arr,
+        inc_arr,
+        color='#16a34a',
+        linestyle='--',
+        linewidth=2.0,
+        label=f'Incremental Conductance — INC (η = {eta_inc:.2f}%)',
+        zorder=5,
+    )
+    ax2.set_ylim(
+        max(0.0, float(min(po_arr.min(), inc_arr.min())) - 18.0),
+        float(pt_arr.max()) + 22.0,
+    )
+    ax2.set_xlabel('Simulation Control Step k (-)', fontsize=10, fontweight='bold')
+    ax2.set_ylabel('Extracted Power P (Watts)', fontsize=10, fontweight='bold')
+    ax2.set_title('MPPT Control Engine Dynamic Step-Tracking & Steady-State Convergence',
                   fontsize=11, fontweight='bold')
-    ax2.grid(True, ls='--', alpha=0.5)
-    ax2.legend(loc='lower right')
+    ax2.grid(True, ls='--', alpha=0.45)
+    ax2.legend(loc='lower right', fontsize=9.0, framealpha=0.94)
 
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300)
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -71,21 +137,42 @@ def plot_thermal_derating(pv_model, save_path='results/thermal_derating.png'):
     temperatures = [25, 45, 65]
     colors = ['#1f77b4', '#ff7f0e', '#d62728']
 
-    plt.figure(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(9.2, 5.4))
+    v_peaks, p_peaks = [], []
     for T_c, col in zip(temperatures, colors, strict=True):
-        v, _, p = pv_model.calculate_iv_curve(G=1000.0, T_c_celsius=T_c)
-        plt.plot(v, p, label=f'T = {T_c}°C', color=col, linewidth=2)
+        v, _, p = pv_model.calculate_iv_curve(G=1000.0, T_c_celsius=T_c, num_points=400)
+        idx = int(np.argmax(p))
+        vp, pp = float(v[idx]), float(p[idx])
+        v_peaks.append(vp)
+        p_peaks.append(pp)
+        ax.plot(
+            v,
+            p,
+            label=f'T_cell = {T_c}°C (P_max = {pp:.1f} W @ V_mpp = {vp:.1f} V)',
+            color=col,
+            linewidth=2.2,
+        )
+        ax.scatter([vp], [pp], color=col, s=54, zorder=5, edgecolors='white', linewidths=1.2)
 
-    plt.title('PV Module Thermal Power Derating Curve (G = 1000 W/m²)',
-              fontsize=11, fontweight='bold')
-    plt.xlabel('Module Voltage V (Volts)', fontsize=10)
-    plt.ylabel('Power Output P (Watts)', fontsize=10)
-    plt.grid(True, ls='--', alpha=0.5)
-    plt.legend()
+    ax.plot(
+        v_peaks,
+        p_peaks,
+        color='#334155',
+        linestyle='--',
+        linewidth=1.5,
+        label='Thermal V_mpp Drift Locus (γ_P ≈ -0.39%/K)',
+        zorder=4,
+    )
+    ax.set_ylim(0.0, max(p_peaks) * 1.13)
+    ax.set_title('PV Module Thermal Power Derating & MPP Voltage Shift (G = 1000 W/m²)',
+                 fontsize=11, fontweight='bold')
+    ax.set_xlabel('Module Voltage V (Volts)', fontsize=10, fontweight='bold')
+    ax.set_ylabel('Power Output P (Watts)', fontsize=10, fontweight='bold')
+    ax.grid(True, ls='--', alpha=0.45)
+    ax.legend(loc='upper left', fontsize=8.8, framealpha=0.94)
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300)
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
-
 
 def plot_partial_shading_curves(
     shading_results,

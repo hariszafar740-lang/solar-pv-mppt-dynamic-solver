@@ -41,12 +41,13 @@ jobs:
       - name: Test (pytest)
         run: python -m pytest -v
 
-      - name: Smoke-test pv-mppt CLI entry point
+      - name: Smoke-test pv-mppt CLI & static explorer build
         run: |
           pv-mppt --version
           pv-mppt info --json
           pv-mppt iv --irradiance 850 --temp 40 --json
           pv-mppt boost --v-bus 60 --json
+          pv-mppt web --output-dir /tmp/ci_site --json
 
       - name: Smoke-run main benchmark
         run: python main.py

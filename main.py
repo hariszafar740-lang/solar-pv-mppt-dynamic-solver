@@ -79,10 +79,10 @@ def main():
     time_steps = np.arange(len(irradiance_profile))
 
     p_true, p_po, p_inc = [], [], []
-    po = PerturbAndObserve(step_size=0.15, v_init=20.0, v_min=0.0, v_max=pv.V_oc)
-    inc = IncrementalConductance(step_size=0.15, v_init=20.0,
-                                 v_min=0.0, v_max=pv.V_oc)
-    v_po, v_inc = 20.0, 20.0
+    po = PerturbAndObserve(step_size=0.45, v_init=22.0, v_min=0.0, v_max=pv.V_oc)
+    inc = IncrementalConductance(step_size=0.45, v_init=22.0,
+                                 v_min=0.0, v_max=pv.V_oc, conductance_tol=2e-2)
+    v_po, v_inc = 22.0, 22.0
 
     for G in irradiance_profile:
         v_arr, i_arr, p_arr = pv.calculate_iv_curve(G=G)
