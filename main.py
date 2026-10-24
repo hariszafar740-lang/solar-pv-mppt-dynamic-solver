@@ -2,9 +2,11 @@ import numpy as np
 
 from src.boost_converter import BoostConverterInterface
 from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+from src.partial_shading import ShadedPVString, get_benchmark_shading_profiles
 from src.pv_model import SolarPVModel
 from src.visualizer import (
     plot_mppt_tracking,
+    plot_partial_shading_curves,
     plot_pv_characteristics,
     plot_thermal_derating,
 )
@@ -13,6 +15,7 @@ from src.visualizer import (
 def main():
     pv = SolarPVModel()
     converter = BoostConverterInterface(v_out=60.0, efficiency=0.95)
+    shaded_string = ShadedPVString(pv, n_modules=1, n_bypass_per_module=3)
 
     ref = pv.REFERENCE_MODULE
     print("=" * 70)
@@ -27,6 +30,21 @@ def main():
     # Generate Plots
     plot_pv_characteristics(pv)
     plot_thermal_derating(pv)
+
+    # Partial-Shading Bypass-Diode Characterization
+    profiles = get_benchmark_shading_profiles()
+    shading_cases = {
+        "Uniform STC (1000 / 1000 / 1000 W/m²)": shaded_string.solve_curve(
+            profiles["uniform_stc"], num_points=600
+        ),
+        "Chimney Shade (1000 / 700 / 350 W/m²)": shaded_string.solve_curve(
+            profiles["moderate_chimney_shade"], num_points=600
+        ),
+        "Cloud + Soiling (850 / 520 / 200 W/m²)": shaded_string.solve_curve(
+            profiles["severe_cloud_edge"], num_points=600
+        ),
+    }
+    plot_partial_shading_curves(shading_cases)
 
     # Run Dynamic MPPT Profile (bounded to the physical operating window)
     irradiance_profile = [1000.0]*50 + [600.0]*50 + [900.0]*50
@@ -63,6 +81,14 @@ def main():
     print(f"Tracking Voltage V_mpp:                 {avg_v_mpp:.2f} V")
     print(f"Boost Converter Duty Ratio (D):         {duty_cycle:.4f}")
     print(f"DC Bus Link Power Delivered (P_out):    {net_p_out:.2f} W (eta = 95%)")
+    print("-" * 70)
+    print("Bypass-Diode Partial-Shading Multi-Peak Diagnostics:")
+    for label, res in shading_cases.items():
+        print(
+            f"  {label:<39} -> GMPP = {res.gmpp.power_w:6.2f} W @ "
+            f"{res.gmpp.voltage_v:5.2f} V | peaks = {res.num_peaks} | "
+            f"mismatch = {res.mismatch_loss_pct:4.1f}%"
+        )
     print("-" * 70)
     print("Thermal Derating Metrics (1000 W/m^2):")
     for T in [25, 45, 65]:

@@ -36,6 +36,12 @@ To match the dynamic PV array MPPT voltage $V_{mpp}$ to a fixed DC link voltage 
 
 $$D = 1 - \frac{V_{mpp}}{V_{out}}$$
 
+### 5. Series-String Bypass-Diode Partial Shading
+
+For a series string of $M = N_{\text{mod}} \times N_{\text{bp}}$ cell substrings under non-uniform irradiance $G_m$ and cell temperature $T_m$, Kirchhoff's Voltage Law gives $V_{\text{string}}(I) = \sum_{m=1}^{M} V_m(I)$, where each substring is protected by an anti-parallel Schottky bypass diode conducting in reverse bias ($V_m < 0$):
+
+$$I_{\text{sub},m}(V_m) = I_{\text{cell},m}(V_m) + \begin{cases} I_{0,\text{bp}}\left[\exp(-V_m / V_{t,\text{bp}}) - 1\right], & V_m < 0 \\ 0, & V_m \ge 0 \end{cases}$$
+
 ## Reference Module & Data Provenance
 
 Default constructor parameters are the STC datasheet values of the
@@ -102,6 +108,9 @@ python main.py                       # regenerate benchmarks and plots in result
 
 ### Thermal Power Derating
 ![Thermal Derating](results/thermal_derating.png)
+
+### Bypass-Diode Partial-Shading & Multi-Peak P-V Curves
+![Partial Shading Curves](results/partial_shading_curves.png)
 
 ## Testing & CI
 
