@@ -1,7 +1,11 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 
 def plot_pv_characteristics(pv_model, save_path='results/pv_characteristics.png'):
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
     irradiances = [1000, 800, 600, 400]
     colors = ['#d62728', '#ff7f0e', '#2ca02c', '#1f77b4']
 
@@ -32,6 +36,7 @@ def plot_pv_characteristics(pv_model, save_path='results/pv_characteristics.png'
 
 def plot_mppt_tracking(time_steps, irradiance, p_true, p_po, p_inc,
                        save_path='results/mppt_tracking.png'):
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 7), sharex=True)
 
     ax1.plot(time_steps, irradiance, color='#7f7f7f', linewidth=2.5,
@@ -62,6 +67,7 @@ def plot_mppt_tracking(time_steps, irradiance, p_true, p_po, p_inc,
 
 def plot_thermal_derating(pv_model, save_path='results/thermal_derating.png'):
     """Renders thermal power derating curves across operating temperatures."""
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
     temperatures = [25, 45, 65]
     colors = ['#1f77b4', '#ff7f0e', '#d62728']
 
@@ -76,6 +82,106 @@ def plot_thermal_derating(pv_model, save_path='results/thermal_derating.png'):
     plt.ylabel('Power Output P (Watts)', fontsize=10)
     plt.grid(True, ls='--', alpha=0.5)
     plt.legend()
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300)
+    plt.close()
+
+
+def plot_partial_shading_curves(
+    shading_results,
+    save_path='results/partial_shading_curves.png',
+):
+    """Render bypass-diode staircase I-V and multi-peak P-V curves with GMPP/LMPP markers."""
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+    if not isinstance(shading_results, dict):
+        items = [("Partial Shading", shading_results)]
+    else:
+        items = list(shading_results.items())
+
+    palette = ['#1f77b4', '#d62728', '#2ca02c', '#9467bd', '#ff7f0e']
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14.2, 5.6))
+
+    max_p = 1.0
+    line_handles = []
+    has_local_peaks = False
+
+    for idx, (label, res) in enumerate(items):
+        col = palette[idx % len(palette)]
+        ax1.plot(res.voltages, res.currents, color=col, linewidth=2.1, label=label)
+        (line_h,) = ax2.plot(res.voltages, res.powers, color=col, linewidth=2.1, label=label)
+        line_handles.append(line_h)
+        max_p = max(max_p, float(res.gmpp.power_w))
+
+        ax2.scatter(
+            [res.gmpp.voltage_v],
+            [res.gmpp.power_w],
+            color=col,
+            edgecolors='#111111',
+            linewidths=0.9,
+            marker='*',
+            s=145,
+            zorder=6,
+        )
+        local_peaks = [pk for pk in res.peaks if not pk.is_global]
+        if local_peaks:
+            has_local_peaks = True
+            ax2.scatter(
+                [pk.voltage_v for pk in local_peaks],
+                [pk.power_w for pk in local_peaks],
+                facecolors='white',
+                edgecolors=col,
+                linewidths=1.8,
+                marker='o',
+                s=52,
+                zorder=5,
+            )
+
+    gmpp_proxy = Line2D(
+        [0],
+        [0],
+        marker='*',
+        color='none',
+        markerfacecolor='#f59e0b',
+        markeredgecolor='#111111',
+        markersize=11,
+        label='GMPP (Global Peak)',
+    )
+    legend_handles = [*line_handles, gmpp_proxy]
+    if has_local_peaks:
+        lmpp_proxy = Line2D(
+            [0],
+            [0],
+            marker='o',
+            color='none',
+            markerfacecolor='white',
+            markeredgecolor='#374151',
+            markeredgewidth=1.8,
+            markersize=7,
+            label='LMPP (Local Trap)',
+        )
+        legend_handles.append(lmpp_proxy)
+
+    ax1.set_title(
+        'Bypass-Diode Staircase I-V Characteristics',
+        fontsize=11.5,
+        fontweight='bold',
+    )
+    ax1.set_xlabel('String Terminal Voltage V (Volts)', fontsize=10)
+    ax1.set_ylabel('String Current I (Amperes)', fontsize=10)
+    ax1.grid(True, ls='--', alpha=0.5)
+    ax1.legend(loc='lower left', fontsize=8.8)
+
+    ax2.set_ylim(0.0, max_p * 1.13)
+    ax2.set_title(
+        'Multi-Peak P-V Characteristics (GMPP vs. Local Traps)',
+        fontsize=11.5,
+        fontweight='bold',
+    )
+    ax2.set_xlabel('String Terminal Voltage V (Volts)', fontsize=10)
+    ax2.set_ylabel('String Output Power P (Watts)', fontsize=10)
+    ax2.grid(True, ls='--', alpha=0.5)
+    ax2.legend(handles=legend_handles, loc='upper left', fontsize=8.8)
+
     plt.tight_layout()
     plt.savefig(save_path, dpi=300)
     plt.close()
