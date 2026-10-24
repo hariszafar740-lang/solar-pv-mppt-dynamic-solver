@@ -108,18 +108,30 @@ Independent verification (see `tests/test_reference_cec.py` and `tests/test_pvli
 * All outputs are real, finite `float64`; current is reported in the generating quadrant (clamped at 0 beyond V_oc).
 * Known simplifications vs. SAM/pvlib: CEC `Adjust` factor taken as 0; `R_s` temperature independent; ideality factor constant with temperature. The model is an engineering-grade single-diode solver, not a manufacturer-level performance prediction tool.
 
-## How to Run
+## Installation & Engineering CLI (`pv-mppt`)
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate            # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+python -m pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt -r requirements-dev.txt
+pip install --no-build-isolation -e .
 
-# optional: independent pvlib cross-validation + lint tooling (Python >= 3.11 for pvlib)
-pip install -r requirements-dev.txt -r requirements-validation.txt
+# optional: independent pvlib 0.16.1 CEC cross-validation (Python >= 3.11)
+pip install -r requirements-validation.txt
 
-python -m pytest                     # run the test suite
-python main.py                       # regenerate benchmarks and plots in results/
+# Inspect CEC reference module & single-diode extraction
+pv-mppt info
+
+# Solve operating point, partial shading, EN 50530 ramps & boost stage (ASCII or --json)
+pv-mppt iv --irradiance 850 --temp 40
+pv-mppt shading --irradiances 1000 700 350 --run-gmppt
+pv-mppt en50530 --json
+pv-mppt boost --v-bus 60 --stages 1000:45 550:45 900:45
+
+# Run full test suite & regenerate all 7 publication figures
+python -m pytest
+pv-mppt benchmark --output-dir results
 ```
 
 ## Simulation Artifacts & Dynamic Results
@@ -147,6 +159,6 @@ python main.py                       # regenerate benchmarks and plots in result
 
 ## Testing & CI
 
-* `pytest` suite (218 tests) covers the STC reference point, the historical 300.08 W / 266.898 W defect, invalid-input rejection (negative/NaN/complex irradiance, out-of-envelope temperature), zero & low irradiance, thermal derating, MPPT convergence/steady-state stability/dynamic step response/voltage bounds, boost-converter math & clamping, and the pinned CEC reference data.
+* `pytest` suite (227 tests) covers the STC reference point, the historical 300.08 W / 266.898 W defect, invalid-input rejection (negative/NaN/complex irradiance, out-of-envelope temperature), zero & low irradiance, thermal derating, MPPT convergence/steady-state stability/dynamic step response/voltage bounds, boost-converter math & clamping, and the pinned CEC reference data.
 * pvlib cross-checks (`tests/test_pvlib_crosscheck.py`) run automatically when pvlib is installed and skip otherwise — the core suite is hermetic and needs no network access.
-* GitHub Actions (`.github/workflows/ci.yml`) runs ruff lint + pytest on Python 3.10/3.11/3.12 (pvlib cross-checks on 3.11+).
+* GitHub Actions (`.github/workflows/ci.yml`) installs `pv-mppt-solver` in editable mode and runs `ruff`, `pytest`, `pv-mppt` CLI smoke tests, and `main.py` across Python 3.10–3.13 (pvlib cross-checks on 3.11/3.12).

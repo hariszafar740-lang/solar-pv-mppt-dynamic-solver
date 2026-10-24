@@ -39,7 +39,10 @@ from src.partial_shading import (
 )
 from src.pv_model import SolarPVModel
 
+__version__ = "1.0.0"
+
 __all__ = [
+    "__version__",
     "BoostConverterInterface",
     "BoostLossBreakdown",
     "BoostPowerStageParams",

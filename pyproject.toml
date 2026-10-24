@@ -1,3 +1,70 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pv-mppt-solver"
+version = "1.0.0"
+description = "Physics-based Single-Diode Solar PV, Bypass-Diode Partial Shading, Global MPPT, CENELEC EN 50530 & Dynamic Boost Converter Solver"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Haris Zafar" },
+]
+keywords = [
+  "photovoltaics",
+  "solar-pv",
+  "mppt",
+  "partial-shading",
+  "particle-swarm-optimization",
+  "en-50530",
+  "boost-converter",
+  "power-electronics",
+  "renewable-energy",
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Typing :: Typed",
+]
+dependencies = [
+  "numpy>=1.24.0",
+  "matplotlib>=3.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.3.0",
+  "ruff==0.17.0",
+]
+validation = [
+  "pvlib==0.16.1; python_version >= '3.11'",
+]
+
+[project.urls]
+Homepage = "https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver"
+Repository = "https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver"
+Issues = "https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/issues"
+
+[project.scripts]
+pv-mppt = "src.cli:main"
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.setuptools.package-data]
+src = ["py.typed"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
