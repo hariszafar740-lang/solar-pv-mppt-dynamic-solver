@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -12,11 +13,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -26,9 +29,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
 
-      # pvlib (independent CEC cross-checks) requires Python >= 3.11.
+      # pvlib 0.16.1 independent CEC cross-checks run on Python 3.11 and 3.12
       - name: Install validation dependencies
-        if: matrix.python-version != '3.10'
+        if: matrix.python-version == '3.11' || matrix.python-version == '3.12'
         run: pip install -r requirements-validation.txt
 
       - name: Lint (ruff)
@@ -36,3 +39,6 @@ jobs:
 
       - name: Test (pytest)
         run: python -m pytest -v
+
+      - name: Smoke-run main benchmark
+        run: python main.py

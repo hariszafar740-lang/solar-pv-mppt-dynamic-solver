@@ -14,8 +14,12 @@ htmlcov/
 .venv/
 venv/
 env/
+pv_env/
 
-# Packaging
+# Packaging & static site output
 build/
 dist/
+site/
 *.egg-info/
+*.log
+.DS_Store
