@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: "Solar PV Dynamic Characterization & MPPT Control Solver"
+message: "If you use this photovoltaic model or MPPT benchmark suite in academic, research, or engineering work, please cite it using the metadata below."
+type: software
+authors:
+  - given-names: Haris
+    family-names: Zafar
+    alias: hariszafar740-lang
+repository-code: "https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver"
+abstract: >-
+  Physics-based single-diode solar photovoltaic module solver (De Soto / CEC
+  formulation cross-validated against NREL SAM and pvlib Lambert-W), dynamic
+  MPPT control engines (P&O and Incremental Conductance), and DC-DC boost
+  converter interface benchmarks.
+keywords:
+  - photovoltaics
+  - solar-energy
+  - single-diode-model
+  - mppt
+  - power-electronics
+  - boost-converter
+  - pvlib
+  - python
+license: MIT
+version: 0.2.0
+date-released: "2026-10-24"
