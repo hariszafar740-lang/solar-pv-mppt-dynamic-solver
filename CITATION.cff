@@ -1,26 +1,32 @@
 cff-version: 1.2.0
-title: "Solar PV Dynamic Characterization & MPPT Control Solver"
-message: "If you use this photovoltaic model or MPPT benchmark suite in academic, research, or engineering work, please cite it using the metadata below."
+title: "Solar PV Dynamic Characterization, Global MPPT & Boost Stage Solver"
+message: "If you use this photovoltaic model, MPPT benchmark suite, or power-stage solver in academic, research, or engineering work, please cite it using the metadata below."
 type: software
 authors:
   - given-names: Haris
     family-names: Zafar
     alias: hariszafar740-lang
 repository-code: "https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver"
+url: "https://hariszafar740-lang.github.io/solar-pv-mppt-dynamic-solver/"
 abstract: >-
-  Physics-based single-diode solar photovoltaic module solver (De Soto / CEC
-  formulation cross-validated against NREL SAM and pvlib Lambert-W), dynamic
-  MPPT control engines (P&O and Incremental Conductance), and DC-DC boost
-  converter interface benchmarks.
+  Multi-physics Python solver and interactive workbench for single-diode solar
+  photovoltaic modules (De Soto / CEC formulation cross-validated against NREL
+  SAM and pvlib Lambert-W), Schottky bypass-diode partial-shading strings,
+  Global MPPT (PSO and Hybrid Global-Scan + Adaptive INC), CENELEC EN 50530
+  dynamic irradiance ramps with coupled electro-thermal cell ODE and Sera
+  dP-P&O, and a state-space averaged DC-DC boost converter with cascaded
+  average-current-mode PI control and component loss maps.
 keywords:
   - photovoltaics
   - solar-energy
   - single-diode-model
-  - mppt
-  - power-electronics
+  - partial-shading
+  - global-mppt
+  - en-50530
   - boost-converter
+  - power-electronics
   - pvlib
   - python
 license: MIT
-version: 0.2.0
+version: 1.0.0
 date-released: "2026-10-24"

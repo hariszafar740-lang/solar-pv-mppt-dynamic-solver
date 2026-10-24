@@ -38,6 +38,11 @@ from src.partial_shading import (
     get_benchmark_shading_profiles,
 )
 from src.pv_model import SolarPVModel
+from src.web_dashboard import (
+    FIGURE_FILENAMES,
+    build_static_site,
+    export_benchmark_payload,
+)
 
 __version__ = "1.0.0"
 
@@ -56,6 +61,7 @@ __all__ = [
     "EN50530BenchmarkResult",
     "EN50530ControllerSummary",
     "EN50530RampSegment",
+    "FIGURE_FILENAMES",
     "GlobalMPPTBenchmark",
     "HybridGlobalScanINC",
     "IncrementalConductance",
@@ -67,8 +73,10 @@ __all__ = [
     "ShadingResult",
     "SolarPVModel",
     "build_en50530_composite_profile",
+    "build_static_site",
     "compute_weighted_efficiencies",
     "evaluate_converter_efficiency_curve",
+    "export_benchmark_payload",
     "generate_trapezoidal_irradiance_profile",
     "get_benchmark_shading_profiles",
     "run_closed_loop_boost_transient",
