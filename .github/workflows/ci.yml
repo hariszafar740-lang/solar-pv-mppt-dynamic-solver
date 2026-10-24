@@ -24,10 +24,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Install core + dev dependencies
+      - name: Install package (editable) + dev dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt -r requirements-dev.txt
+          pip install --no-build-isolation -e .
 
       # pvlib 0.16.1 independent CEC cross-checks run on Python 3.11 and 3.12
       - name: Install validation dependencies
@@ -39,6 +40,13 @@ jobs:
 
       - name: Test (pytest)
         run: python -m pytest -v
+
+      - name: Smoke-test pv-mppt CLI entry point
+        run: |
+          pv-mppt --version
+          pv-mppt info --json
+          pv-mppt iv --irradiance 850 --temp 40 --json
+          pv-mppt boost --v-bus 60 --json
 
       - name: Smoke-run main benchmark
         run: python main.py
