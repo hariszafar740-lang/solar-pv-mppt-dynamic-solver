@@ -49,6 +49,14 @@ Conventional hill-climbing trackers (`PerturbAndObserve`, `IncrementalConductanc
 * **`ParticleSwarmMPPT`**: Stratified $N_p$-particle voltage swarm with annealed inertia $w(k): w_{\max} \to w_{\min}$, velocity clamping, convergence lock, and event-triggered re-dispersion.
 * **`HybridGlobalScanINC`**: Fast coarse global voltage sweep across $[V_{\min}, V_{\max}]$ followed by Variable-Step Adaptive Incremental Conductance ($\Delta V_k = \operatorname{clip}(\alpha |dP/dV|, \Delta V_{\min}, \Delta V_{\max})$).
 
+### 7. CENELEC EN 50530 Dynamic Ramp Standard & Coupled Electro-Thermal Cell Transient
+
+`src/en50530_benchmark.py` evaluates dynamic MPPT efficiency $\eta_{\text{MPPT,dyn}} = \int_0^T P_{\text{DC}}(t)\,dt \,/\, \int_0^T P_{\text{MPP}}(G(t), T_c(t))\,dt$ across standardized trapezoidal irradiance ramps ($100\text{--}500\,\mathrm{W/m^2}$ and $300\text{--}1000\,\mathrm{W/m^2}$) coupled with a first-order lumped module energy-balance ODE:
+
+$$C_{\text{th}} \frac{dT_c}{dt} = \alpha_{\text{abs}} G(t) - \frac{P_{\text{elec}}(t)}{A_{\text{mod}}} - U_{\text{th}}\bigl(T_c(t) - T_{\text{amb}}\bigr)$$
+
+Includes Sera's irradiance-compensated **`DeltaPPO`** (`dP-P&O`) controller, eliminating ramp-induced voltage drift (`99.94%` EN 50530 efficiency vs. `87.18%` for standard P&O).
+
 ## Reference Module & Data Provenance
 
 Default constructor parameters are the STC datasheet values of the
@@ -121,6 +129,9 @@ python main.py                       # regenerate benchmarks and plots in result
 
 ### Global MPPT (PSO & Hybrid Scan + Adaptive INC) vs. Local-Trap Conventional MPPT
 ![Global MPPT Comparison](results/global_mppt_comparison.png)
+
+### CENELEC EN 50530 Dynamic Irradiance Ramps & Coupled Electro-Thermal Cell Transient
+![EN 50530 Dynamic Benchmark](results/en50530_dynamic_benchmark.png)
 
 ## Testing & CI
 

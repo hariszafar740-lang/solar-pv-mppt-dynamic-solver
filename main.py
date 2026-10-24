@@ -1,11 +1,13 @@
 import numpy as np
 
 from src.boost_converter import BoostConverterInterface
+from src.en50530_benchmark import run_en50530_dynamic_benchmark
 from src.global_mppt import run_dynamic_gmppt_benchmark
 from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
 from src.partial_shading import ShadedPVString, get_benchmark_shading_profiles
 from src.pv_model import SolarPVModel
 from src.visualizer import (
+    plot_en50530_benchmark,
     plot_global_mppt_comparison,
     plot_mppt_tracking,
     plot_partial_shading_curves,
@@ -51,6 +53,10 @@ def main():
     # Global MPPT vs. Conventional MPPT under 3-Phase Dynamic Partial Shading
     gmppt_bench = run_dynamic_gmppt_benchmark(shaded_string)
     plot_global_mppt_comparison(gmppt_bench)
+
+    # CENELEC EN 50530 Dynamic Ramp & Coupled Electro-Thermal Cell Transient
+    en50530_res = run_en50530_dynamic_benchmark(pv)
+    plot_en50530_benchmark(en50530_res)
 
     # Run Dynamic MPPT Profile (bounded to the physical operating window)
     irradiance_profile = [1000.0]*50 + [600.0]*50 + [900.0]*50
@@ -101,6 +107,13 @@ def main():
         print(
             f"  {name:<28} -> Dynamic Eff = {traj.tracking_efficiency_pct:5.2f}% | "
             f"Settled GMPP Eff = {traj.settled_efficiency_pct:5.2f}%"
+        )
+    print("-" * 70)
+    print("CENELEC EN 50530 Dynamic Ramp & Coupled Electro-Thermal Benchmark:")
+    for name, summary in en50530_res.controllers.items():
+        print(
+            f"  {name:<28} -> EN 50530 eta = {summary.en50530_efficiency_pct:5.2f}% | "
+            f"RMS dV = {summary.rms_voltage_error_v:4.2f} V"
         )
     print("-" * 70)
     print("Thermal Derating Metrics (1000 W/m^2):")
