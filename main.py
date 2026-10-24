@@ -1,12 +1,18 @@
 import numpy as np
 
 from src.boost_converter import BoostConverterInterface
+from src.dynamic_boost import (
+    BoostPowerStageParams,
+    evaluate_converter_efficiency_curve,
+    run_closed_loop_boost_transient,
+)
 from src.en50530_benchmark import run_en50530_dynamic_benchmark
 from src.global_mppt import run_dynamic_gmppt_benchmark
 from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
 from src.partial_shading import ShadedPVString, get_benchmark_shading_profiles
 from src.pv_model import SolarPVModel
 from src.visualizer import (
+    plot_dynamic_boost_converter,
     plot_en50530_benchmark,
     plot_global_mppt_comparison,
     plot_mppt_tracking,
@@ -57,6 +63,16 @@ def main():
     # CENELEC EN 50530 Dynamic Ramp & Coupled Electro-Thermal Cell Transient
     en50530_res = run_en50530_dynamic_benchmark(pv)
     plot_en50530_benchmark(en50530_res)
+
+    # State-Space Averaged Boost Power Stage & Cascaded PI Voltage Servo
+    boost_tr = run_closed_loop_boost_transient(pv)
+    eff_60v = evaluate_converter_efficiency_curve(
+        pv, BoostPowerStageParams(v_bus_v=60.0)
+    )
+    eff_120v = evaluate_converter_efficiency_curve(
+        pv, BoostPowerStageParams(v_bus_v=120.0)
+    )
+    plot_dynamic_boost_converter(boost_tr, eff_60v, eff_120v)
 
     # Run Dynamic MPPT Profile (bounded to the physical operating window)
     irradiance_profile = [1000.0]*50 + [600.0]*50 + [900.0]*50
@@ -115,6 +131,18 @@ def main():
             f"  {name:<28} -> EN 50530 eta = {summary.en50530_efficiency_pct:5.2f}% | "
             f"RMS dV = {summary.rms_voltage_error_v:4.2f} V"
         )
+    print("-" * 70)
+    print("Dynamic DC-DC Boost Stage & Cascaded Current-Mode PI Diagnostics:")
+    for curve in (eff_60v, eff_120v):
+        print(
+            f"  V_bus = {curve.v_bus_v:5.1f} V -> Peak = {curve.peak_efficiency_pct:5.2f}% | "
+            f"Euro = {curve.euro_efficiency_pct:5.2f}% | CEC = {curve.cec_efficiency_pct:5.2f}%"
+        )
+    print(
+        f"  Closed-Loop Transient  -> Avg Conv Eff = "
+        f"{boost_tr.avg_converter_efficiency_pct:5.2f}% | "
+        f"RMS Servo Error = {boost_tr.rms_servo_tracking_error_v * 1e3:4.1f} mV"
+    )
     print("-" * 70)
     print("Thermal Derating Metrics (1000 W/m^2):")
     for T in [25, 45, 65]:
