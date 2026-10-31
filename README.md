@@ -58,7 +58,7 @@ R_sh(G) = R_(sh,ref)G_ref/G
 
 ### 4. Boost Converter Duty Cycle Translation
 
-To match the dynamic PV array MPPT voltage V_mpp to a fixed DC link voltage V_out:
+To match the dynamic PV array MPPT voltage V(mpp) to a fixed DC link voltage V(out):
 
 ~~~
 D = 1 - V_mpp/V_out
@@ -66,8 +66,8 @@ D = 1 - V_mpp/V_out
 
 ### 5. Series-String Bypass-Diode Partial Shading
 
-For a series string of M = N_mod ×N_bp cell substrings under non-uniform irradiance G_m and cell temperature T_m.
-Kirchhoff's Voltage Law gives V_string(I) = Σ_(m=1)^M V_m(I), where each substring is protected by an anti-parallel Schottky bypass diode conducting in reverse bias (V_m < 0):
+For a series string of M = N(mod) ×N(bp) cell substrings under non-uniform irradiance G(m) and cell temperature T(m).
+Kirchhoff's Voltage Law gives V(string)(I) = Σ_(m=1)^M V(m)(I), where each substring is protected by an anti-parallel Schottky bypass diode conducting in reverse bias (V(m) < 0):
 
 ~~~
 I_(sub,m)(V_m) = I_(cell,m)(V_m) + I_(0,bp)[exp(-V_m / V_(t,bp)) - 1], for V_m < 0;
@@ -78,13 +78,13 @@ I_(sub,m)(V_m) = I_(cell,m)(V_m) + I_(0,bp)[exp(-V_m / V_(t,bp)) - 1], for V_m <
 
 Conventional hill-climbing trackers (`PerturbAndObserve`, `IncrementalConductance`) follow local dP/dV sign and become trapped in high-voltage local maxima (LMPPs). `src/global_mppt.py` provides two Global MPPT (GMPPT) engines with zero steady-state oscillation lock and bypassed-plateau cloud-clearance watchdog probing:
 
-* `ParticleSwarmMPPT`: Stratified N_p-particle voltage swarm with annealed inertia w(k): w_max →w_min, velocity clamping, convergence lock, and event-triggered re-dispersion.
-* `HybridGlobalScanINC`: Fast coarse global voltage sweep across [V_min, V_max] followed by Variable-Step Adaptive Incremental Conductance (ΔV_k = clip(α |dP/dV|, ΔV_min, ΔV_max)).
+* `ParticleSwarmMPPT`: Stratified N(p)-particle voltage swarm with annealed inertia w(k): w(max) →w(min), velocity clamping, convergence lock, and event-triggered re-dispersion.
+* `HybridGlobalScanINC`: Fast coarse global voltage sweep across [V(min), V(max)] followed by Variable-Step Adaptive Incremental Conductance (ΔV(k) = clip(α |dP/dV|, ΔV(min), ΔV(max))).
 
 ### 7. CENELEC EN 50530 Dynamic Ramp Standard & Coupled Electro-Thermal Cell Transient
 
-`src/en50530_benchmark.py` evaluates dynamic MPPT efficiency η_(MPPT,dyn) = ∫_0^T P_DC(t)dt / ∫_0^T P_MPP(G(t).
-T_c(t))dt across standardized trapezoidal irradiance ramps (100--500W/m^2 and 300--1000W/m^2) coupled with a first-order lumped module energy-balance ODE:
+`src/en50530_benchmark.py` evaluates dynamic MPPT efficiency η_(MPPT,dyn) = ∫_0^T P(DC)(t)dt / ∫_0^T P(MPP)(G(t).
+T(c)(t))dt across standardized trapezoidal irradiance ramps (100--500W/m^2 and 300--1000W/m^2) coupled with a first-order lumped module energy-balance ODE:
 
 ~~~
 C_th dT_c/dt = α_abs G(t) - P_elec(t)/A_mod - U_th(T_c(t) - T_amb)
@@ -100,9 +100,9 @@ Includes Sera's irradiance-compensated **`DeltaPPO`** (`dP-P&O`) controller, eli
 C_in dv_pv/dt = i_pv(v_pv, G, T_c) - i_L, L di_L/dt = v_pv - R_eq(D) i_L - (1 - D)(V_bus + V_fd)
 ~~~
 
-* `CascadedBoostPIController`: Decouples the lightly damped input L--C_in tank into an outer PV-voltage PI loop commanding i_(L,ref) (with i_pv feedforward) and an inner average-current-mode PI loop commanding PWM duty D (`69.5 mV` RMS voltage-servo error across `1000 -> 550 -> 900 W/m²` irradiance steps).
-* `BoostLossBreakdown` & Weighted Efficiencies: Resolves inductor winding copper (I_rms^2 R_L), MOSFET conduction (D I_rms^2 R_(ds(on))), switching + C_oss + reverse-recovery Q_rr.
-* Freewheeling diode conduction, and magnetic core ripple losses, alongside European (η_Euro = 97.67%) and California CEC (η_CEC = 97.66%) weighted ratings at V_bus = 60V.
+* `CascadedBoostPIController`: Decouples the lightly damped input L--C(in) tank into an outer PV-voltage PI loop commanding i_(L,ref) (with i(pv) feedforward) and an inner average-current-mode PI loop commanding PWM duty D (`69.5 mV` RMS voltage-servo error across `1000 -> 550 -> 900 W/m²` irradiance steps).
+* `BoostLossBreakdown` & Weighted Efficiencies: Resolves inductor winding copper (I(rms)^2 R(L)), MOSFET conduction (D I(rms)^2 R_(ds(on))), switching + C(oss) + reverse-recovery Q(rr).
+* Freewheeling diode conduction, and magnetic core ripple losses, alongside European (η(Euro) = 97.67%) and California CEC (η(CEC) = 97.66%) weighted ratings at V(bus) = 60V.
 
 ## Reference Module & Data Provenance
 
@@ -130,10 +130,10 @@ Independent verification (see `tests/test_reference_cec.py` and `tests/test_pvli
 * Implied temperature coefficients are physical and close to the record's: β_voc ≈ −0.125 V/K (record −0.114069), γ_p ≈ −0.391 %/K (record −0.386).
 
 > Provenance disclaimer. The identity of the module that the *original* hard-coded defaults
-> (I_sc=9.35, V_oc=38.2, I_mp=8.80, V_mp=34.1, R_s=0.221, R_sh=415.6, n=1.3) were meant to
+> (I(sc)=9.35, V(oc)=38.2, I(mp)=8.80, V(mp)=34.1, R(s)=0.221, R(sh)=415.6, n=1.3) were meant to
 > represent could not be established: no CEC/SAM record matches them, and they are mutually
 > inconsistent with the single-diode model, reproducing their nameplate 300.08 W would require a
-> non-physical ideality factor (n ≈ 0.47). The old implementation silently ignored I_mp/V_mp and
+> non-physical ideality factor (n ≈ 0.47). The old implementation silently ignored I(mp)/V(mp) and
 > produced 266.898 W at STC. The constructor now rejects such inconsistent sets with a
 > `ValueError` (regression-tested). The AU Optronics record above is a **pinned, traceable
 > replacement reference**, not a claim that it was the original panel.
@@ -142,7 +142,7 @@ Independent verification (see `tests/test_reference_cec.py` and `tests/test_pvli
 
 * Irradiance: finite, real, `G >= 0` W/m² (`G < 0` raises `ValueError`; `G = 0` returns zero generation on a well-formed grid).
 * Cell temperature: finite, real, −40 °C ≤ T ≤ +85 °C (standard c-Si module operating envelope).
-* All outputs are real, finite `float64`; current is reported in the generating quadrant (clamped at 0 beyond V_oc).
+* All outputs are real, finite `float64`; current is reported in the generating quadrant (clamped at 0 beyond V(oc)).
 * Known simplifications vs.
 * SAM/pvlib: CEC `Adjust` factor taken as 0; `R_s` temperature independent; ideality factor constant with temperature.
 * The model is an engineering-grade single-diode solver, not a manufacturer-level performance prediction tool.
@@ -150,13 +150,12 @@ Independent verification (see `tests/test_reference_cec.py` and `tests/test_pvli
 ## Installation & Engineering CLI (`pv-mppt`)
 
 ```bash
-python3 -m venv.venv
-source.venv/bin/activate # Windows:.venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate # Windows: .venv\Scripts\activate
 python -m pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt -r requirements-dev.txt
-pip install --no-build-isolation -e.
+pip install --no-build-isolation -e .
 
-~~~
 # optional: independent pvlib 0.16.1 CEC cross-validation (Python >= 3.11)
 pip install -r requirements-validation.txt
 
@@ -170,9 +169,7 @@ pv-mppt iv --irradiance 850 --temp 40 pv-mppt shading --irradiances 1000 700 350
 python -m pytest pv-mppt benchmark --output-dir results pv-mppt web --output-dir site # build interactive HTML5/Canvas workbench
 ```
 
-~~~
 ## Simulation Artifacts & Dynamic Results
-
 ### STC PV Characteristic Curves
 ![PV Characteristics](results/pv_characteristics.png)
 
