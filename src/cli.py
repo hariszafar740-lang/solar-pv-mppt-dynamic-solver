@@ -297,7 +297,7 @@ def _cmd_info(args: argparse.Namespace) -> int:
         return 0
 
     print("=" * 72)
-    print(f"pv-mppt-solver v{__version__} — Reference PV Module & Diode Extraction")
+    print(f"pv-mppt-solver v{__version__}, Reference PV Module & Diode Extraction")
     print("=" * 72)
     print(f"Module:           {ref['name']} ({pv.N_s} cells)")
     print(f"Database:         {ref['database']} ({ref['record_version']})")
@@ -670,7 +670,7 @@ def _cmd_benchmark(args: argparse.Namespace) -> int:
         return 0
 
     print("=" * 72)
-    print(f"Full Multi-Physics Suite Complete — Generated {len(figures)} Figures in '{out_dir}'")
+    print(f"Full Multi-Physics Suite Complete, Generated {len(figures)} Figures in '{out_dir}'")
     print("-" * 72)
     print(
         f"  Hybrid GMPPT Dynamic Efficiency:  "

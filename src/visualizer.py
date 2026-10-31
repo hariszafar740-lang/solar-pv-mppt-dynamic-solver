@@ -103,7 +103,7 @@ def plot_mppt_tracking(time_steps, irradiance, p_true, p_po, p_inc,
         color='#1f77b4',
         linewidth=2.6,
         alpha=0.82,
-        label=f'Perturb & Observe — P&O (η = {eta_po:.2f}%)',
+        label=f'Perturb & Observe, P&O (η = {eta_po:.2f}%)',
         zorder=4,
     )
     ax2.plot(
@@ -112,7 +112,7 @@ def plot_mppt_tracking(time_steps, irradiance, p_true, p_po, p_inc,
         color='#16a34a',
         linestyle='--',
         linewidth=2.0,
-        label=f'Incremental Conductance — INC (η = {eta_inc:.2f}%)',
+        label=f'Incremental Conductance, INC (η = {eta_inc:.2f}%)',
         zorder=5,
     )
     ax2.set_ylim(

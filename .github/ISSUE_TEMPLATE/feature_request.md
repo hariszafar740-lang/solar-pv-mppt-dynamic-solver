@@ -1,8 +1,5 @@
 ---
-name: Feature Request
-about: Propose a new PV physics model, MPPT controller, or converter benchmark
-title: "[FEAT] "
-labels: enhancement
+name: Feature Request about: Propose a new PV physics model, MPPT controller, or converter benchmark title: "[FEAT] " labels: enhancement
 ---
 
 ## Engineering Motivation

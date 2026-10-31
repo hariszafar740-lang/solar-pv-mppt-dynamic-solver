@@ -2,12 +2,8 @@
 
 ## Our Pledge
 
-We as members, contributors, and maintainers pledge to make participation in our
-project and community a harassment-free experience for everyone, regardless of
-age, body size, visible or invisible disability, ethnicity, sex characteristics,
-gender identity and expression, level of experience, education, socio-economic
-status, nationality, personal appearance, race, caste, color, religion, or
-sexual identity and orientation.
+We as members, contributors, and maintainers pledge to make participation in our project and community a harassment-free experience for everyone, regardless of age, body size.
+Visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, color, religion, or sexual identity and orientation.
 
 ## Our Standards
 
@@ -26,8 +22,7 @@ Examples of unacceptable behavior include:
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported via GitHub repository issues or security advisories to `@hariszafar740-lang`.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported via GitHub repository issues or security advisories to `@hariszafar740-lang`.
 All complaints will be reviewed and investigated promptly and fairly.
 
 ## Attribution

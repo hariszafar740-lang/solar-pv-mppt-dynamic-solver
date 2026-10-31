@@ -290,7 +290,7 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Solar PV Dynamic Characterization &amp; MPPT Explorer — v__VERSION__</title>
+  <title>Solar PV Dynamic Characterization &amp; MPPT Explorer, v__VERSION__</title>
   <style>
     :root {
       --bg: #0b1120;
@@ -591,18 +591,18 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
           <div>
             <div class="mini-kpis">
               <div class="mini-kpi">
-                <div class="lbl">Global Peak (GMPP)</div><div class="val" id="kpi-gmpp-p">—</div>
+                <div class="lbl">Global Peak (GMPP)</div><div class="val" id="kpi-gmpp-p">, </div>
               </div>
               <div class="mini-kpi">
                 <div class="lbl">GMPP Voltage / Current</div>
-                <div class="val" id="kpi-gmpp-vi">—</div>
+                <div class="val" id="kpi-gmpp-vi">, </div>
               </div>
               <div class="mini-kpi">
-                <div class="lbl">Detected P-V Peaks</div><div class="val" id="kpi-peaks">—</div>
+                <div class="lbl">Detected P-V Peaks</div><div class="val" id="kpi-peaks">, </div>
               </div>
               <div class="mini-kpi">
                 <div class="lbl">Shading Mismatch Loss</div>
-                <div class="val" id="kpi-mismatch">—</div>
+                <div class="val" id="kpi-mismatch">, </div>
               </div>
             </div>
             <div class="canvas-pair">
@@ -684,11 +684,11 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="mini-kpis">
               <div class="mini-kpi">
                 <div class="lbl">Stage Efficiency</div>
-                <div class="val" id="kpi-boost-eta">—</div>
+                <div class="val" id="kpi-boost-eta">, </div>
               </div>
               <div class="mini-kpi">
                 <div class="lbl">Total Dissipated Loss</div>
-                <div class="val" id="kpi-boost-loss">—</div>
+                <div class="val" id="kpi-boost-loss">, </div>
               </div>
             </div>
             <div class="loss-bars" id="boost-loss-bars"></div>

@@ -2,7 +2,7 @@
 
 Physical & Standards Formulation
 --------------------------------
-1. **EN 50530 Trapezoidal Irradiance Ramps**:
+1. EN 50530 Trapezoidal Irradiance Ramps:
    Standardized dynamic MPPT testing subjects PV trackers to trapezoidal
    irradiance profiles oscillating between ``G_low`` and ``G_high`` (the
    100-500 W/m^2 low-to-medium band and 300-1000 W/m^2 medium-to-high band) at
@@ -11,7 +11,7 @@ Physical & Standards Formulation
 
        eta_MPPT,dyn = 100 * (integral_0^T P_dc(t) dt) / (integral_0^T P_mpp(G(t), T_c(t)) dt)
 
-2. **Coupled Lumped Electro-Thermal Cell Transient ODE**:
+2. Coupled Lumped Electro-Thermal Cell Transient ODE:
    Rather than holding cell temperature constant during irradiance ramps, the
    module laminate's areal heat capacity ``C_th`` [J/(m^2*K)] and overall heat
    loss coefficient ``U_th`` [W/(m^2*K)] govern cell temperature ``T_c(t)``:
@@ -22,7 +22,7 @@ Physical & Standards Formulation
    open-circuit operation (real electro-thermal coupling), calibrated to
    nominal NOCT ~ 45 degC at 800 W/m^2, 20 degC.
 
-3. **Sera `dP-P&O` Drift-Free Ramp Tracker (`DeltaPPO`)**:
+3. Sera `dP-P&O` Drift-Free Ramp Tracker (`DeltaPPO`):
    Conventional P&O and INC suffer severe upward/downward voltage drift during
    fast irradiance ramps because ``(dP/dG)*dG`` masks ``(dP/dV)*dV``.  `DeltaPPO`
    (Sera et al., IEEE TIE) interleaves a constant-voltage hold sample to measure

@@ -2,7 +2,7 @@
 
 Physical Formulation
 --------------------
-1. **State-Space Averaged Boost Power Stage (`[v_pv, i_L]`)**:
+1. State-Space Averaged Boost Power Stage (`[v_pv, i_L]`):
    Couples the nonlinear PV module current ``i_pv(v_pv, G, T_c)`` to an input
    DC filter capacitor ``C_in`` and boost inductor ``L`` feeding a stiff DC-link
    bus ``V_bus``:
@@ -13,18 +13,18 @@ Physical Formulation
    where ``R_eq(D) = R_L + D * R_dson + (1 - D) * R_d`` models parasitic
    conduction drops, with discontinuous-conduction diode blocking (``i_L >= 0``).
 
-2. **Cascaded Average-Current-Mode PI Control (`CascadedBoostPIController`)**:
+2. Cascaded Average-Current-Mode PI Control (`CascadedBoostPIController`):
    Direct single-loop duty-to-``v_pv`` control excites the lightly damped input
    ``L-C_in`` tank.  Industrial PV boost stages decouple the plant into two
    cascaded first-order loops (Erickson & Maksimovic; Villalva et al., IEEE TPEL):
-   - **Outer PV-Voltage PI Loop** (acts on ``e_v = v_pv - v_ref`` with ``i_pv``
+   - Outer PV-Voltage PI Loop (acts on ``e_v = v_pv - v_ref`` with ``i_pv``
      feedforward to command inductor current reference ``i_L,ref``):
          i_L,ref = i_pv + K_pv * (v_pv - v_ref) + K_iv * integral(v_pv - v_ref) dt
-   - **Inner Inductor-Current PI Loop** (tracks ``i_L,ref`` with ``1 - v_pv/V_bus``
+   - Inner Inductor-Current PI Loop (tracks ``i_L,ref`` with ``1 - v_pv/V_bus``
      duty feedforward and anti-windup clamping):
          D = (1 - v_pv / V_bus) + K_pi * (i_L,ref - i_L) + K_ii * integral(e_i) dt
 
-3. **Semiconductor & Magnetic Power-Loss Model (`BoostLossBreakdown`)**:
+3. Semiconductor & Magnetic Power-Loss Model (`BoostLossBreakdown`):
    Resolves inductor copper loss (``I_L,rms^2 * R_L``), MOSFET conduction and
    switching/``C_oss`` overlap losses, freewheeling diode forward/resistive +
    reverse-recovery losses, inductor core ripple losses, and European

@@ -65,13 +65,13 @@ implicit equation yields negative current, are clamped to 0).
 Reference module
 ----------------
 Default constructor values are the datasheet-level parameters of the
-**AU Optronics PM060MBR_300W** monocrystalline 60-cell module as published in
+AU Optronics PM060MBR_300W monocrystalline 60-cell module as published in
 the NREL SAM / California Energy Commission (CEC) module database, record
 version "SAM 2018.11.11 r2" (dated 2019-01-03), exactly as bundled with
 pvlib 0.16.1 (``sam-library-cec-modules-2019-03-05.csv``).  See README.md and
 tests/test_reference_cec.py for the full provenance and verification record.
 The identity of the module that the original hard-coded defaults were meant
-to represent could **not** be established; those defaults were mutually
+to represent could not be established; those defaults were mutually
 inconsistent with the single-diode model at any physical ideality factor and
 are rejected by this constructor.
 """
