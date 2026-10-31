@@ -4,6 +4,7 @@
 [![GitHub Pages](https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/actions/workflows/deploy_pages.yml/badge.svg)](https://hariszafar740-lang.github.io/solar-pv-mppt-dynamic-solver/)
 [![Live Explorer](https://img.shields.io/badge/Live_Explorer-GitHub_Pages-0ea5e9?logo=github)](https://hariszafar740-lang.github.io/solar-pv-mppt-dynamic-solver/)
 ![Python Version](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)
+[![PyPI](https://img.shields.io/pypi/v/pv-mppt-solver?color=blue)](https://pypi.org/project/pv-mppt-solver/)
 [![Release](https://img.shields.io/badge/release-v1.0.0-success)](https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
