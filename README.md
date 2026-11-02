@@ -17,12 +17,12 @@ And a State-Space Averaged DC-DC Boost Power Stage with 2-Loop Cascaded Current-
 
 | Subsystem | Module | Key Verified Metric |
 |---|---|---|
-| Single-Diode CEC Extraction | `src/pv_model.py` | `300.1152 W` STC (`< 1e-8 A` vs. `pvlib` Lambert-W across `-10..75 °C`) |
-| Schottky Bypass Partial Shading | `src/partial_shading.py` | Exact KVL multi-peak staircases (`148.16 W @ 22.28 V`, 3 peaks under `1000/700/350 W/m²`) |
-| Global MPPT (PSO & Hybrid INC) | `src/global_mppt.py` | `92.47%` Hybrid dynamic / `99.57%` PSO settled vs. `80.60%` conventional LMPP trap |
-| CENELEC EN 50530 & Thermal ODE | `src/en50530_benchmark.py` | `99.94%` Sera `dP-P&O` (`0.25 V` RMS error) vs. `87.18%` Standard P&O ramp drift |
-| State-Space Boost & Cascaded PI | `src/dynamic_boost.py` | `η_Euro = 97.67%` (`60 V` LVDC), `69.5 mV` RMS voltage-servo tracking error |
-| CLI & Interactive Web Explorer | `src/cli.py`, `src/web_dashboard.py` | `pv-mppt` (`info`, `iv`, `shading`, `en50530`, `boost`, `benchmark`, `web`) + real-time browser lab |
+| Single-Diode CEC Extraction | `pv_mppt/pv_model.py` | `300.1152 W` STC (`< 1e-8 A` vs. `pvlib` Lambert-W across `-10..75 °C`) |
+| Schottky Bypass Partial Shading | `pv_mppt/partial_shading.py` | Exact KVL multi-peak staircases (`148.16 W @ 22.28 V`, 3 peaks under `1000/700/350 W/m²`) |
+| Global MPPT (PSO & Hybrid INC) | `pv_mppt/global_mppt.py` | `92.47%` Hybrid dynamic / `99.57%` PSO settled vs. `80.60%` conventional LMPP trap |
+| CENELEC EN 50530 & Thermal ODE | `pv_mppt/en50530_benchmark.py` | `99.94%` Sera `dP-P&O` (`0.25 V` RMS error) vs. `87.18%` Standard P&O ramp drift |
+| State-Space Boost & Cascaded PI | `pv_mppt/dynamic_boost.py` | `η_Euro = 97.67%` (`60 V` LVDC), `69.5 mV` RMS voltage-servo tracking error |
+| CLI & Interactive Web Explorer | `pv_mppt/cli.py`, `pv_mppt/web_dashboard.py` | `pv-mppt` (`info`, `iv`, `shading`, `en50530`, `boost`, `benchmark`, `web`) + real-time browser lab |
 
 ## Mathematical System Formulation
 
@@ -77,14 +77,14 @@ I_(sub,m)(V_m) = I_(cell,m)(V_m) + I_(0,bp)[exp(-V_m / V_(t,bp)) - 1], for V_m <
 
 ### 6. Global MPPT Under Multi-Peak Partial Shading
 
-Conventional hill-climbing trackers (`PerturbAndObserve`, `IncrementalConductance`) follow local dP/dV sign and become trapped in high-voltage local maxima (LMPPs). `src/global_mppt.py` provides two Global MPPT (GMPPT) engines with zero steady-state oscillation lock and bypassed-plateau cloud-clearance watchdog probing:
+Conventional hill-climbing trackers (`PerturbAndObserve`, `IncrementalConductance`) follow local dP/dV sign and become trapped in high-voltage local maxima (LMPPs). `pv_mppt/global_mppt.py` provides two Global MPPT (GMPPT) engines with zero steady-state oscillation lock and bypassed-plateau cloud-clearance watchdog probing:
 
 * `ParticleSwarmMPPT`: Stratified N(p)-particle voltage swarm with annealed inertia w(k): w(max) →w(min), velocity clamping, convergence lock, and event-triggered re-dispersion.
 * `HybridGlobalScanINC`: Fast coarse global voltage sweep across [V(min), V(max)] followed by Variable-Step Adaptive Incremental Conductance (ΔV(k) = clip(α |dP/dV|, ΔV(min), ΔV(max))).
 
 ### 7. CENELEC EN 50530 Dynamic Ramp Standard & Coupled Electro-Thermal Cell Transient
 
-`src/en50530_benchmark.py` evaluates dynamic MPPT efficiency η_(MPPT,dyn) = ∫_0^T P(DC)(t)dt / ∫_0^T P(MPP)(G(t).
+`pv_mppt/en50530_benchmark.py` evaluates dynamic MPPT efficiency η_(MPPT,dyn) = ∫_0^T P(DC)(t)dt / ∫_0^T P(MPP)(G(t).
 T(c)(t))dt across standardized trapezoidal irradiance ramps (100--500W/m^2 and 300--1000W/m^2) coupled with a first-order lumped module energy-balance ODE:
 
 ~~~
@@ -95,7 +95,7 @@ Includes Sera's irradiance-compensated **`DeltaPPO`** (`dP-P&O`) controller, eli
 
 ### 8. State-Space Averaged Boost Power Stage, Cascaded Current-Mode PI Control & Loss Map
 
-`src/dynamic_boost.py` upgrades the steady-state duty translator to a coupled 2nd-order `[v_pv, i_L]` non-ideal boost stage integrated via 4th-order Runge-Kutta with discontinuous-conduction diode blocking (`i_L >= 0`):
+`pv_mppt/dynamic_boost.py` upgrades the steady-state duty translator to a coupled 2nd-order `[v_pv, i_L]` non-ideal boost stage integrated via 4th-order Runge-Kutta with discontinuous-conduction diode blocking (`i_L >= 0`):
 
 ~~~
 C_in dv_pv/dt = i_pv(v_pv, G, T_c) - i_L, L di_L/dt = v_pv - R_eq(D) i_L - (1 - D)(V_bus + V_fd)

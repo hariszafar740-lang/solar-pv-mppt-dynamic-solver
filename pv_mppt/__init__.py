@@ -1,7 +1,7 @@
 """Solar PV Dynamic Characterization & MPPT Solver package."""
 
-from src.boost_converter import BoostConverterInterface
-from src.dynamic_boost import (
+from pv_mppt.boost_converter import BoostConverterInterface
+from pv_mppt.dynamic_boost import (
     BoostLossBreakdown,
     BoostPowerStageParams,
     BoostTransientResult,
@@ -12,7 +12,7 @@ from src.dynamic_boost import (
     evaluate_converter_efficiency_curve,
     run_closed_loop_boost_transient,
 )
-from src.en50530_benchmark import (
+from pv_mppt.en50530_benchmark import (
     DeltaPPO,
     EN50530BenchmarkResult,
     EN50530ControllerSummary,
@@ -22,29 +22,29 @@ from src.en50530_benchmark import (
     generate_trapezoidal_irradiance_profile,
     run_en50530_dynamic_benchmark,
 )
-from src.global_mppt import (
+from pv_mppt.global_mppt import (
     ControllerTrajectory,
     GlobalMPPTBenchmark,
     HybridGlobalScanINC,
     ParticleSwarmMPPT,
     run_dynamic_gmppt_benchmark,
 )
-from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
-from src.partial_shading import (
+from pv_mppt.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+from pv_mppt.partial_shading import (
     BypassDiodeSpec,
     PowerPeak,
     ShadedPVString,
     ShadingResult,
     get_benchmark_shading_profiles,
 )
-from src.pv_model import SolarPVModel
-from src.web_dashboard import (
+from pv_mppt.pv_model import SolarPVModel
+from pv_mppt.web_dashboard import (
     FIGURE_FILENAMES,
     build_static_site,
     export_benchmark_payload,
 )
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 __all__ = [
     "__version__",

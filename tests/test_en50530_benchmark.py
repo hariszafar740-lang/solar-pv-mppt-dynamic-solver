@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from src.en50530_benchmark import (
+from pv_mppt.en50530_benchmark import (
     DeltaPPO,
     EN50530RampSegment,
     LumpedThermalModel,
@@ -11,7 +11,7 @@ from src.en50530_benchmark import (
     generate_trapezoidal_irradiance_profile,
     run_en50530_dynamic_benchmark,
 )
-from src.visualizer import plot_en50530_benchmark
+from pv_mppt.visualizer import plot_en50530_benchmark
 
 
 def test_trapezoidal_irradiance_profile_endpoints_and_slew_bounds():

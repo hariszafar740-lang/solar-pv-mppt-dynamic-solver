@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from src.boost_converter import BoostConverterInterface
-from src.pv_model import SolarPVModel
+from pv_mppt.boost_converter import BoostConverterInterface
+from pv_mppt.pv_model import SolarPVModel
 
 
 def test_boost_duty_cycle_math():

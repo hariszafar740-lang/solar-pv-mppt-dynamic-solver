@@ -42,7 +42,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from src.pv_model import (
+from pv_mppt.pv_model import (
     MAX_OPERATING_TEMP_C,
     MIN_OPERATING_TEMP_C,
     SolarPVModel,

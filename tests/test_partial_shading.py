@@ -3,14 +3,14 @@
 import numpy as np
 import pytest
 
-from src.mppt_algorithms import PerturbAndObserve
-from src.partial_shading import (
+from pv_mppt.mppt_algorithms import PerturbAndObserve
+from pv_mppt.partial_shading import (
     BypassDiodeSpec,
     ShadedPVString,
     get_benchmark_shading_profiles,
 )
-from src.pv_model import SolarPVModel
-from src.visualizer import plot_partial_shading_curves
+from pv_mppt.pv_model import SolarPVModel
+from pv_mppt.visualizer import plot_partial_shading_curves
 
 
 def test_uniform_stc_string_matches_single_diode_module_reference():
@@ -128,10 +128,10 @@ def test_bypass_diode_spec_validation():
 
 
 def test_sample_at_voltage_and_package_exports():
-    import src
+    import pv_mppt
 
-    assert hasattr(src, "ShadedPVString")
-    string = src.ShadedPVString()
+    assert hasattr(pv_mppt, "ShadedPVString")
+    string = pv_mppt.ShadedPVString()
     res = string.solve_curve([1000.0, 700.0, 350.0], num_points=500)
 
     i0, p0 = res.sample_at_voltage(0.0)

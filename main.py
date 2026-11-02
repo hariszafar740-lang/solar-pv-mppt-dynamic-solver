@@ -1,17 +1,17 @@
 import numpy as np
 
-from src.boost_converter import BoostConverterInterface
-from src.dynamic_boost import (
+from pv_mppt.boost_converter import BoostConverterInterface
+from pv_mppt.dynamic_boost import (
     BoostPowerStageParams,
     evaluate_converter_efficiency_curve,
     run_closed_loop_boost_transient,
 )
-from src.en50530_benchmark import run_en50530_dynamic_benchmark
-from src.global_mppt import run_dynamic_gmppt_benchmark
-from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
-from src.partial_shading import ShadedPVString, get_benchmark_shading_profiles
-from src.pv_model import SolarPVModel
-from src.visualizer import (
+from pv_mppt.en50530_benchmark import run_en50530_dynamic_benchmark
+from pv_mppt.global_mppt import run_dynamic_gmppt_benchmark
+from pv_mppt.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+from pv_mppt.partial_shading import ShadedPVString, get_benchmark_shading_profiles
+from pv_mppt.pv_model import SolarPVModel
+from pv_mppt.visualizer import (
     plot_dynamic_boost_converter,
     plot_en50530_benchmark,
     plot_global_mppt_comparison,

@@ -38,8 +38,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
-from src.pv_model import (
+from pv_mppt.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+from pv_mppt.pv_model import (
     MAX_OPERATING_TEMP_C,
     MIN_OPERATING_TEMP_C,
     SolarPVModel,

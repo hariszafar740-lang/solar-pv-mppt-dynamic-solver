@@ -32,9 +32,9 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
-from src.partial_shading import ShadedPVString, ShadingResult
-from src.pv_model import _require_finite_real
+from pv_mppt.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+from pv_mppt.partial_shading import ShadedPVString, ShadingResult
+from pv_mppt.pv_model import _require_finite_real
 
 __all__ = [
     "ControllerTrajectory",

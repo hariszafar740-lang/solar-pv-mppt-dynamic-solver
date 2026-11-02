@@ -33,7 +33,7 @@ Tolerances
 import numpy as np
 import pytest
 
-from src.pv_model import SolarPVModel
+from pv_mppt.pv_model import SolarPVModel
 
 # ---- Verbatim transcription of the pinned CEC record -------------------
 RECORD_NAME = "AU Optronics PM060MBR_300W"

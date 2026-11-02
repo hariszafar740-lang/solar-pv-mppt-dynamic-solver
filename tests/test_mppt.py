@@ -8,8 +8,8 @@ interpolation on a fine grid), not from duplicated analytic formulas.
 import numpy as np
 import pytest
 
-from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
-from src.pv_model import SolarPVModel
+from pv_mppt.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+from pv_mppt.pv_model import SolarPVModel
 
 STEP = 0.15
 

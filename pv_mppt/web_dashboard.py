@@ -1,4 +1,4 @@
-"""Static interactive GitHub Pages explorer generator (`src/web_dashboard.py`).
+"""Static interactive GitHub Pages explorer generator (`pv_mppt/web_dashboard.py`).
 
 Generates a self-contained, zero-CDN-dependency HTML5 + HiDPI Canvas engineering
 workbench (`site/index.html`), machine-readable solver verification dataset
@@ -15,16 +15,16 @@ from typing import Any
 
 import numpy as np
 
-from src.dynamic_boost import (
+from pv_mppt.dynamic_boost import (
     BoostPowerStageParams,
     evaluate_converter_efficiency_curve,
     run_closed_loop_boost_transient,
 )
-from src.en50530_benchmark import run_en50530_dynamic_benchmark
-from src.global_mppt import run_dynamic_gmppt_benchmark
-from src.partial_shading import BypassDiodeSpec, ShadedPVString
-from src.pv_model import SolarPVModel
-from src.visualizer import (
+from pv_mppt.en50530_benchmark import run_en50530_dynamic_benchmark
+from pv_mppt.global_mppt import run_dynamic_gmppt_benchmark
+from pv_mppt.partial_shading import BypassDiodeSpec, ShadedPVString
+from pv_mppt.pv_model import SolarPVModel
+from pv_mppt.visualizer import (
     plot_dynamic_boost_converter,
     plot_en50530_benchmark,
     plot_global_mppt_comparison,
@@ -97,7 +97,7 @@ def export_benchmark_payload() -> dict[str, Any]:
     tr_stride = 6
     en_stride = 2
 
-    import src as _pkg
+    import pv_mppt as _pkg
 
     return {
         "package": "pv-mppt-solver",
@@ -200,8 +200,8 @@ def _ensure_figures(results_dir: Path, assets_dir: Path) -> list[str]:
     assets_dir.mkdir(parents=True, exist_ok=True)
     missing = [fn for fn in FIGURE_FILENAMES if not (results_dir / fn).is_file()]
     if missing:
-        from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
-        from src.partial_shading import get_benchmark_shading_profiles
+        from pv_mppt.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+        from pv_mppt.partial_shading import get_benchmark_shading_profiles
 
         pv = SolarPVModel()
         shaded = ShadedPVString(pv, n_modules=1, n_bypass_per_module=3)

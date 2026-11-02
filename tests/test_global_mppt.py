@@ -3,14 +3,14 @@
 import numpy as np
 import pytest
 
-from src.global_mppt import (
+from pv_mppt.global_mppt import (
     HybridGlobalScanINC,
     ParticleSwarmMPPT,
     run_dynamic_gmppt_benchmark,
 )
-from src.mppt_algorithms import IncrementalConductance, PerturbAndObserve
-from src.partial_shading import ShadedPVString
-from src.visualizer import plot_global_mppt_comparison
+from pv_mppt.mppt_algorithms import IncrementalConductance, PerturbAndObserve
+from pv_mppt.partial_shading import ShadedPVString
+from pv_mppt.visualizer import plot_global_mppt_comparison
 
 
 @pytest.fixture(scope="module")

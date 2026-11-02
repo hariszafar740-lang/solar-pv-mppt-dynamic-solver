@@ -38,8 +38,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from src.mppt_algorithms import IncrementalConductance
-from src.pv_model import SolarPVModel, _require_finite_real
+from pv_mppt.mppt_algorithms import IncrementalConductance
+from pv_mppt.pv_model import SolarPVModel, _require_finite_real
 
 __all__ = [
     "BoostLossBreakdown",

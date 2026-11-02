@@ -17,7 +17,7 @@ pvlib = pytest.importorskip("pvlib", reason="optional cross-check dependency")
 
 from pvlib.pvsystem import calcparams_cec, i_from_v, singlediode  # noqa: E402
 
-from src.pv_model import SolarPVModel  # noqa: E402
+from pv_mppt.pv_model import SolarPVModel  # noqa: E402
 
 CONDITIONS = [
     (1000.0, 25.0),

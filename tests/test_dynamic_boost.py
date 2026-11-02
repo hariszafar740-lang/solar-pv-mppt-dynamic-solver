@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from src.dynamic_boost import (
+from pv_mppt.dynamic_boost import (
     BoostLossBreakdown,
     BoostPowerStageParams,
     CascadedBoostPIController,
@@ -14,8 +14,8 @@ from src.dynamic_boost import (
     evaluate_converter_efficiency_curve,
     run_closed_loop_boost_transient,
 )
-from src.pv_model import SolarPVModel
-from src.visualizer import plot_dynamic_boost_converter
+from pv_mppt.pv_model import SolarPVModel
+from pv_mppt.visualizer import plot_dynamic_boost_converter
 
 
 def test_boost_power_stage_params_validation() -> None:

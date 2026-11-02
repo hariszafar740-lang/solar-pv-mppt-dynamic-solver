@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pv-mppt-solver"
-version = "1.0.0"
+version = "1.0.1"
 description = "Physics-based Single-Diode Solar PV, Bypass-Diode Partial Shading, Global MPPT, CENELEC EN 50530 & Dynamic Boost Converter Solver"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -57,13 +57,13 @@ Repository = "https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver
 Issues = "https://github.com/hariszafar740-lang/solar-pv-mppt-dynamic-solver/issues"
 
 [project.scripts]
-pv-mppt = "src.cli:main"
+pv-mppt = "pv_mppt.cli:main"
 
 [tool.setuptools]
-packages = ["src"]
+packages = ["pv_mppt"]
 
 [tool.setuptools.package-data]
-src = ["py.typed"]
+pv_mppt = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,15 +1,16 @@
-"""Tests for static interactive GitHub Pages explorer (`src/web_dashboard.py`)."""
+"""Tests for static interactive GitHub Pages explorer (`pv_mppt/web_dashboard.py`)."""
 
 from __future__ import annotations
 
 import json
 import re
+from importlib import metadata
 from pathlib import Path
 
 import pytest
 
-from src.cli import main
-from src.web_dashboard import (
+from pv_mppt.cli import main
+from pv_mppt.web_dashboard import (
     FIGURE_FILENAMES,
     build_static_site,
     export_benchmark_payload,
@@ -19,7 +20,7 @@ from src.web_dashboard import (
 def test_export_benchmark_payload_matches_verified_physics() -> None:
     payload = export_benchmark_payload()
     assert payload["package"] == "pv-mppt-solver"
-    assert payload["version"] == "1.0.0"
+    assert payload["version"] == metadata.version("pv-mppt-solver")
 
     mod = payload["module_params"]
     assert mod["name"] == "AU Optronics PM060MBR_300W"

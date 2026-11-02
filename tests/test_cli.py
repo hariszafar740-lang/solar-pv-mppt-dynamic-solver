@@ -1,21 +1,22 @@
-"""Tests for PEP 621 package metadata, `py.typed`, and `pv-mppt` CLI (`src/cli.py`)."""
+"""Tests for PEP 621 package metadata, `py.typed`, and `pv-mppt` CLI (`pv_mppt/cli.py`)."""
 
 from __future__ import annotations
 
 import json
 import subprocess
 import sys
+from importlib import metadata
 from pathlib import Path
 
 import pytest
 
-import src
-from src.cli import main
+import pv_mppt
+from pv_mppt.cli import main
 
 
 def test_package_version_and_py_typed_marker() -> None:
-    assert src.__version__ == "1.0.0"
-    py_typed = Path(src.__file__).resolve().parent / "py.typed"
+    assert pv_mppt.__version__ == metadata.version("pv-mppt-solver")
+    py_typed = Path(pv_mppt.__file__).resolve().parent / "py.typed"
     assert py_typed.is_file()
 
 
@@ -24,7 +25,7 @@ def test_cli_version_flag(capsys: pytest.CaptureFixture[str]) -> None:
         main(["--version"])
     assert exc_info.value.code == 0
     out = capsys.readouterr().out
-    assert "pv-mppt 1.0.0" in out
+    assert ("pv-mppt " + metadata.version("pv-mppt-solver")) in out
 
 
 def test_cli_info_human_and_json(capsys: pytest.CaptureFixture[str]) -> None:
@@ -38,7 +39,7 @@ def test_cli_info_human_and_json(capsys: pytest.CaptureFixture[str]) -> None:
     assert rc_json == 0
     data = json.loads(capsys.readouterr().out)
     assert data["package"] == "pv-mppt-solver"
-    assert data["version"] == "1.0.0"
+    assert data["version"] == metadata.version("pv-mppt-solver")
     assert data["reference_module"]["stc_p_max_w"] == pytest.approx(300.1135, abs=0.05)
     assert data["extracted_single_diode"]["ideality_factor_n"] == pytest.approx(
         1.005823, abs=1e-4
@@ -185,13 +186,13 @@ def test_cli_benchmark_generates_all_seven_figures(
         assert p.is_file() and p.stat().st_size > 20_000
 
 
-def test_python_dash_m_src_invocation() -> None:
+def test_python_dash_m_invocation() -> None:
     proc = subprocess.run(
-        [sys.executable, "-m", "src", "info", "--json"],
+        [sys.executable, "-m", "pv_mppt", "info", "--json"],
         check=True,
         capture_output=True,
         text=True,
     )
     parsed = json.loads(proc.stdout)
     assert parsed["package"] == "pv-mppt-solver"
-    assert parsed["version"] == "1.0.0"
+    assert parsed["version"] == metadata.version("pv-mppt-solver")
