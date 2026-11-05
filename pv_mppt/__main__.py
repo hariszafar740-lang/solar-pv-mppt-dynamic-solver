@@ -1,4 +1,4 @@
-"""Module entry point allowing ``python -m src`` invocation."""
+"""Module entry point allowing ``python -m pv_mppt`` invocation."""
 
 from __future__ import annotations
 
