@@ -13,6 +13,18 @@ And **[Live Interactive GitHub Pages Workbench](https://hariszafar740-lang.githu
 Global MPPT (PSO & Hybrid Global-Scan + Adaptive INC), CENELEC EN 50530 Dynamic Irradiance Ramps with Coupled Electro-Thermal Cell ODE & Sera `dP-P&O`.
 And a State-Space Averaged DC-DC Boost Power Stage with 2-Loop Cascaded Current-Mode PI Control**.
 
+## Install
+
+```bash
+pip install pv-mppt-solver
+```
+
+Then `pv-mppt --help`.
+
+The headline number below is re-checked against the published wheel on every
+release by [energy-systems-benchmarks](https://github.com/hariszafar740-lang/energy-systems-benchmarks), and what that check does not cover
+is written up in [the engineering note](https://github.com/hariszafar740-lang/hariszafar740-lang/blob/main/notes/five-packages.md).
+
 ## Subsystem Verification Summary
 
 | Subsystem | Module | Key Verified Metric |
